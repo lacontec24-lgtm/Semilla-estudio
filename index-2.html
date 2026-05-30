@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semilla Estudio — Crea tu página web</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--tierra:#6B4226;--musgo:#4A5E3A;--paja:#D4A853;--lino:#F5F0E8;--ceniza:#7A7670;--ink:#2C2420;--white:#FDFAF5;--border:#E4DDD0;--card:#FFFFFF;--shadow:rgba(107,66,38,.10)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:var(--white);color:var(--ink);min-height:100vh;overflow-x:hidden}
+#app{display:flex;flex-direction:column;min-height:100vh}
+
+/* HEADER */
+.app-header{padding:18px 32px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--musgo);border-radius:50% 50% 50% 0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600}
+.logo-text span{display:block;font-size:.65rem;font-weight:400;color:var(--ceniza);letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif}
+.step-badge{background:var(--lino);border:1px solid var(--border);border-radius:50px;padding:5px 14px;font-size:.72rem;font-weight:500;color:var(--ceniza);letter-spacing:.05em}
+
+/* RESUME BANNER */
+#resume-banner{display:none;background:#fdf6ee;border-bottom:1px solid var(--border);padding:12px 32px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.resume-btns{display:flex;gap:8px}
+
+/* PROGRESS */
+.progress-track{height:2px;background:var(--border);position:sticky;top:67px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--tierra),var(--paja));transition:width .55s cubic-bezier(.4,0,.2,1)}
+
+/* MAIN */
+main{flex:1;display:flex;flex-direction:column;align-items:center;padding:56px 20px 100px}
+
+/* STEPS */
+.step-screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:600px}
+.step-screen.active{display:flex;animation:rise .45s cubic-bezier(.4,0,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.step-eyebrow{display:flex;align-items:center;gap:8px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--musgo);margin-bottom:14px}
+.step-eyebrow::before{content:'';width:20px;height:1px;background:var(--musgo)}
+.step-question{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:700;line-height:1.15;text-align:center;margin-bottom:10px}
+.step-question em{font-style:italic;color:var(--tierra)}
+.step-hint{font-size:.875rem;color:var(--ceniza);text-align:center;line-height:1.6;margin-bottom:36px;max-width:460px}
+
+/* INPUTS */
+.field-wrap{width:100%;margin-bottom:12px}
+.input-field{width:100%;padding:15px 18px;font-family:'Jost',sans-serif;font-size:.95rem;background:var(--card);border:1.5px solid var(--border);border-radius:10px;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s;resize:none}
+.input-field::placeholder{color:#b8b0a6}
+.input-field:focus{border-color:var(--tierra);box-shadow:0 0 0 3px rgba(107,66,38,.1)}
+textarea.input-field{min-height:110px;line-height:1.55}
+
+/* OPTIONS */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:8px}
+.option-card{padding:16px 14px;border:1.5px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
+.option-card:hover{border-color:var(--paja);background:var(--lino)}
+.option-card.selected{border-color:var(--tierra);background:#fdf6ee;box-shadow:0 0 0 3px rgba(107,66,38,.1)}
+.opt-icon{font-size:1.5rem;flex-shrink:0}
+.opt-text{font-size:.875rem;font-weight:500;line-height:1.3}
+
+/* PALETTE */
+.palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;margin-bottom:8px}
+.palette-card{border-radius:12px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:all .2s;aspect-ratio:1;position:relative}
+.palette-card:hover{transform:scale(1.05)}
+.palette-card.selected{border-color:var(--ink);box-shadow:0 4px 16px var(--shadow)}
+.palette-swatch{width:100%;height:70%}
+.palette-name{background:var(--card);padding:6px 6px 7px;font-size:.68rem;font-weight:500;text-align:center;color:var(--ceniza)}
+.palette-card.selected .palette-name{color:var(--ink);font-weight:600}
+
+/* CTA FIELDS */
+.cta-fields{margin-bottom:4px;width:100%}
+
+/* UPLOAD */
+.upload-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin-bottom:8px}
+.upload-box{border:2px dashed var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:border-color .2s,background .2s;background:var(--card);min-height:160px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.upload-box:hover{border-color:var(--tierra);background:#fdf6ee}
+.upload-box.has-image{border-style:solid;border-color:var(--musgo)}
+.upload-preview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;width:100%;height:100%;text-align:center;position:relative}
+.upload-preview img{width:100%;height:140px;object-fit:cover;border-radius:10px;display:block}
+.upload-icon{font-size:2rem}
+.upload-label{font-size:.85rem;font-weight:600;color:var(--ink)}
+.upload-hint{font-size:.75rem;color:var(--ceniza);line-height:1.4}
+.upload-remove{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;margin-bottom:8px}
+.gallery-box{border:2px dashed var(--border);border-radius:12px;cursor:pointer;overflow:hidden;transition:border-color .2s,background .2s;background:var(--card);aspect-ratio:1;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.gallery-box:hover{border-color:var(--tierra);background:#fdf6ee}
+.gallery-box.has-image{border-style:solid;border-color:var(--musgo)}
+.gallery-preview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:100%;text-align:center;position:relative;padding:10px}
+.gallery-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block;position:absolute;inset:0}
+
+/* PRECIOS */
+.precios-grid{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:4px}
+.precio-row{display:grid;grid-template-columns:1fr 130px;gap:10px}
+
+/* TESTIMONIO */
+.testimonio-card{width:100%;background:var(--lino);border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:8px}
+.testimonio-icon{font-size:1.8rem;margin-bottom:14px}
+.testimonio-autor-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+
+/* NAV */
+.nav-row{display:flex;gap:10px;margin-top:32px;width:100%;justify-content:flex-end}
+.btn-back{padding:13px 22px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer;color:var(--ceniza);transition:all .2s}
+.btn-back:hover{border-color:var(--ceniza);color:var(--ink)}
+.btn-next{padding:13px 28px;border-radius:8px;border:none;background:var(--tierra);font-family:'Jost',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;color:var(--lino);transition:all .2s;display:flex;align-items:center;gap:8px}
+.btn-next:hover{background:#5a3620;transform:translateY(-1px);box-shadow:0 6px 20px rgba(107,66,38,.25)}
+
+/* GENERATE */
+.btn-generate{width:100%;margin-top:32px;padding:20px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--tierra) 0%,#8B5A30 100%);font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;cursor:pointer;color:var(--lino);transition:all .3s;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-generate:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(107,66,38,.3)}
+
+/* LOADING */
+#loading-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:28px;text-align:center}
+#loading-screen.active{display:flex}
+.loader-ring{width:56px;height:56px;border-radius:50%;border:2.5px solid var(--border);border-top-color:var(--musgo);border-right-color:var(--paja);animation:spin 1s linear infinite;position:absolute}
+.loader-plant{width:56px;height:56px;position:relative}
+.loader-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-headline{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--ink)}
+.loading-sub{font-size:.875rem;color:var(--ceniza);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.loading-steps{display:flex;flex-direction:column;gap:8px;background:var(--lino);border:1px solid var(--border);border-radius:12px;padding:20px 28px;min-width:260px}
+.ls-item{font-size:.82rem;color:var(--ceniza);display:flex;align-items:center;gap:8px;transition:all .3s}
+.ls-item.done{color:var(--musgo);font-weight:500}
+.ls-item.active{color:var(--tierra);font-weight:600}
+.ls-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* TABS & RESULT */
+#result-screen{display:none;flex-direction:column;align-items:center;width:100%;max-width:920px;animation:rise .5s ease forwards}
+#result-screen.active{display:flex}
+.result-top{display:flex;align-items:flex-start;justify-content:space-between;width:100%;margin-bottom:20px;gap:16px;flex-wrap:wrap}
+.result-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700}
+.result-title span{color:var(--musgo)}
+.result-sub{font-size:.875rem;color:var(--ceniza);margin-top:4px}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-dl{padding:11px 18px;border-radius:8px;border:none;background:var(--musgo);font-family:'Jost',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;color:white;transition:all .2s;white-space:nowrap}
+.btn-dl:hover{background:#3d4f30;transform:translateY(-1px)}
+.btn-share-wa{padding:11px 16px;border-radius:8px;border:none;background:#25D366;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;color:white;transition:all .2s;white-space:nowrap}
+.btn-share-wa:hover{background:#1da851;transform:translateY(-1px)}
+.btn-copy-link{padding:11px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-family:'Jost',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--ink);transition:all .2s;white-space:nowrap}
+.btn-copy-link:hover{border-color:var(--tierra);color:var(--tierra)}
+.btn-copy-link.copied{background:var(--musgo);color:white;border-color:var(--musgo)}
+.btn-netlify{padding:11px 16px;border-radius:8px;border:none;background:var(--tierra);font-family:'Jost',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--lino);transition:all .2s;white-space:nowrap}
+.btn-netlify:hover{background:#5a3620;transform:translateY(-1px)}
+.btn-restart{padding:11px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;color:var(--ceniza);transition:all .2s;white-space:nowrap}
+.btn-restart:hover{border-color:var(--tierra);color:var(--tierra)}
+
+/* TABS */
+.tab-nav{display:flex;width:100%;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;background:var(--lino)}
+.tab-btn{flex:1;padding:13px 20px;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--ceniza);transition:all .2s}
+.tab-btn:first-child{border-right:1.5px solid var(--border)}
+.tab-btn.active{background:var(--card);color:var(--tierra);font-weight:600}
+.tab-panel{display:none;width:100%}
+.tab-panel.active{display:block}
+
+/* EDITOR */
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-bottom:20px}
+.editor-section{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px}
+.editor-section--full{grid-column:1/-1}
+.editor-section-title{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.editor-field{margin-bottom:12px}
+.editor-field:last-child{margin-bottom:0}
+.editor-label{display:block;font-size:.75rem;font-weight:500;color:var(--ceniza);margin-bottom:5px}
+.editor-colors-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.color-input-wrap{display:flex;align-items:center;gap:8px}
+.color-picker{width:40px;height:40px;border-radius:8px;border:1.5px solid var(--border);padding:2px;cursor:pointer;background:none;flex-shrink:0}
+.color-hex{flex:1;font-size:.82rem;padding:10px 12px}
+.editor-update-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--lino);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:4px}
+.editor-update-hint{font-size:.82rem;color:var(--ceniza)}
+.btn-update{padding:12px 26px;border-radius:8px;border:none;background:var(--tierra);font-family:'Jost',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;color:var(--lino);transition:all .2s;white-space:nowrap}
+.btn-update:hover{background:#5a3620;transform:translateY(-1px)}
+.btn-update.updated{background:var(--musgo)}
+
+/* BROWSER PREVIEW */
+.browser-chrome{width:100%;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 16px 56px rgba(107,66,38,.12)}
+.browser-bar{background:var(--lino);padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#FF5F56}.dot.y{background:#FFBD2E}.dot.g{background:#27C93F}
+.url-bar{flex:1;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:.75rem;color:var(--ceniza);text-align:center}
+#preview-frame{width:100%;height:600px;border:none;background:white;display:block}
+.semilla-footer{margin-top:24px;text-align:center;font-size:.75rem;color:var(--ceniza);display:flex;align-items:center;gap:8px;justify-content:center}
+.semilla-footer strong{color:var(--tierra)}
+
+/* NETLIFY MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(44,36,32,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--white);border-radius:20px;padding:36px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.2);position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--ceniza)}
+
+/* INFO NOTE */
+.info-note{background:#fff8f0;border:1.5px solid var(--paja);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--tierra);line-height:1.6;text-align:left;width:100%;margin-bottom:16px}
+
+
+  /* ─── BRIEF DISPLAY ─── */
+  .brief-grid { display:flex; flex-direction:column; gap:12px; width:100%; }
+  .brief-card { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:16px 20px; display:grid; grid-template-columns:28px 1fr; gap:12px; align-items:start; }
+  .brief-card-icon { font-size:1.2rem; margin-top:1px; }
+  .brief-card-label { font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--tierra); margin-bottom:4px; }
+  .brief-card-value { font-size:.9rem; color:var(--ink); line-height:1.5; }
+  .brief-card-empty { color:var(--ceniza); font-style:italic; font-size:.85rem; }
+
+@media(max-width:640px){
+  .options-grid{grid-template-columns:1fr}
+  .palette-grid{grid-template-columns:repeat(3,1fr)}
+  .upload-row{grid-template-columns:1fr}
+  .precio-row{grid-template-columns:1fr}
+  .testimonio-autor-row{grid-template-columns:1fr}
+  .editor-grid{grid-template-columns:1fr}
+  .editor-colors-row{grid-template-columns:1fr}
+  .editor-section--full{grid-column:1}
+  .result-top{flex-direction:column}
+  .editor-update-row{flex-direction:column;align-items:stretch}
+  .app-header{padding:14px 18px}
+  main{padding:36px 14px 80px}
+}
+</style>
+</head>
+<body>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:9999;background:var(--white);display:flex;align-items:center;justify-content:center;padding:24px">
+  <div style="width:100%;max-width:400px">
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:40px">
+      <div style="width:56px;height:56px;background:var(--musgo);border-radius:50% 50% 50% 0;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 16px">🌱</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:6px">Semilla Estudio</h1>
+      <p style="font-size:.875rem;color:var(--ceniza)">Acceso exclusivo para clientes</p>
+    </div>
+
+    <!-- STEP 1: Usuario + Clave -->
+    <div id="login-step1">
+      <div id="login-error" style="display:none;background:#fff0f0;border:1.5px solid #e57373;border-radius:10px;padding:12px 16px;font-size:.82rem;color:#c0392b;margin-bottom:16px;text-align:center"></div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:.75rem;font-weight:500;color:var(--ceniza);margin-bottom:5px">Correo electrónico</label>
+        <input type="email" id="login-user" class="input-field" placeholder="tu@correo.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      </div>
+      <div style="margin-bottom:24px">
+        <label style="display:block;font-size:.75rem;font-weight:500;color:var(--ceniza);margin-bottom:5px">Contraseña</label>
+        <input type="password" id="login-pass" class="input-field" placeholder="Tu contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button onclick="doLogin()" id="login-btn" style="width:100%;padding:16px;background:var(--tierra);color:var(--lino);border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s">Entrar →</button>
+      <p style="text-align:center;margin-top:20px;font-size:.75rem;color:var(--ceniza)">¿No tienes acceso? <a href="https://wa.me/573133366528" style="color:var(--tierra);font-weight:600">Contáctanos</a></p>
+    </div>
+
+    <!-- STEP 2: OTP -->
+    <div id="login-step2" style="display:none">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:2.5rem;margin-bottom:10px">📧</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;margin-bottom:8px">Revisa tu correo</h2>
+        <p style="font-size:.85rem;color:var(--ceniza);line-height:1.6">Enviamos un código de 6 dígitos a <strong id="otp-email-display"></strong></p>
+      </div>
+      <div id="otp-error" style="display:none;background:#fff0f0;border:1.5px solid #e57373;border-radius:10px;padding:12px 16px;font-size:.82rem;color:#c0392b;margin-bottom:16px;text-align:center"></div>
+      <div id="otp-success-msg" style="display:none;background:#f0faf5;border:1.5px solid var(--musgo);border-radius:10px;padding:12px 16px;font-size:.82rem;color:var(--musgo);margin-bottom:16px;text-align:center"></div>
+
+      <!-- OTP input boxes -->
+      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:20px">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,0)" onkeydown="otpKeydown(event,0)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,1)" onkeydown="otpKeydown(event,1)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,2)" onkeydown="otpKeydown(event,2)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,3)" onkeydown="otpKeydown(event,3)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,4)" onkeydown="otpKeydown(event,4)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpInput(this,5)" onkeydown="otpKeydown(event,5)" style="width:48px;height:56px;text-align:center;font-size:1.4rem;font-weight:700;border:2px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;color:var(--ink);outline:none;transition:border-color .2s">
+      </div>
+
+      <!-- Timer -->
+      <div style="text-align:center;margin-bottom:20px">
+        <span style="font-size:.8rem;color:var(--ceniza)">El código expira en </span>
+        <span id="otp-timer" style="font-size:.8rem;font-weight:700;color:var(--tierra)">15:00</span>
+      </div>
+
+      <button onclick="verifyOTP()" id="otp-verify-btn" style="width:100%;padding:16px;background:var(--tierra);color:var(--lino);border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;margin-bottom:12px">Verificar código</button>
+      <button onclick="resendOTP()" id="otp-resend-btn" style="width:100%;padding:12px;background:none;border:1.5px solid var(--border);border-radius:10px;font-family:'Jost',sans-serif;font-size:.875rem;color:var(--ceniza);cursor:pointer">Reenviar código</button>
+      <button onclick="backToStep1()" style="width:100%;padding:10px;background:none;border:none;font-family:'Jost',sans-serif;font-size:.8rem;color:var(--ceniza);cursor:pointer;margin-top:4px">← Volver</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="app">
+
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-mark">🌱</div>
+    <div class="logo-text">Semilla Estudio<span>Crea tu página web</span></div>
+  </div>
+  <div class="step-badge" id="step-counter">Paso 1 de 13</div>
+</header>
+
+<div id="resume-banner">
+  <div style="font-size:.85rem;color:var(--tierra);font-weight:500">🌱 Tienes un formulario guardado. ¿Continuar donde lo dejaste?</div>
+  <div class="resume-btns">
+    <button onclick="resumeProgress()" style="background:var(--tierra);color:var(--lino);border:none;border-radius:6px;padding:8px 16px;font-family:'Jost',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer">Continuar</button>
+    <button onclick="dismissResume()" style="background:none;border:1.5px solid var(--border);border-radius:6px;padding:8px 14px;font-family:'Jost',sans-serif;font-size:.8rem;color:var(--ceniza);cursor:pointer">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="progress-track"><div class="progress-fill" id="progress" style="width:7.7%"></div></div>
+
+<main>
+
+<!-- PASO 1 -->
+<div class="step-screen active" data-step="1">
+  <div class="step-eyebrow">Paso 1 — Tu identidad</div>
+  <h1 class="step-question">¿Cómo se llama <em>tu negocio?</em></h1>
+  <p class="step-hint">Escribe el nombre tal como quieres que aparezca en tu página web.</p>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-name" placeholder="Ej: Panadería La Rosita, Estudio Creativo, Boutique Alma…" maxlength="60"></div>
+  <div class="nav-row"><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 2 -->
+<div class="step-screen" data-step="2">
+  <div class="step-eyebrow">Paso 2 — Tu actividad</div>
+  <h1 class="step-question">¿Qué tipo de <em>negocio</em> es?</h1>
+  <p class="step-hint">Selecciona la categoría que mejor describe lo que haces.</p>
+  <div class="options-grid">
+    <div class="option-card" onclick="selectOption(this,'q-type','Restaurante o comida')"><div class="opt-icon">🍽️</div><div class="opt-text">Restaurante / Comida</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Tienda o productos')"><div class="opt-icon">🛍️</div><div class="opt-text">Tienda / Productos</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Servicios profesionales')"><div class="opt-icon">💼</div><div class="opt-text">Servicios profesionales</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Salud y bienestar')"><div class="opt-icon">🌿</div><div class="opt-text">Salud / Bienestar</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Belleza y estética')"><div class="opt-icon">✨</div><div class="opt-text">Belleza / Estética</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Educación o cursos')"><div class="opt-icon">📚</div><div class="opt-text">Educación / Cursos</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Arte y creatividad')"><div class="opt-icon">🎨</div><div class="opt-text">Arte / Creatividad</div></div>
+    <div class="option-card" onclick="selectOption(this,'q-type','Otro tipo de negocio')"><div class="opt-icon">⚡</div><div class="opt-text">Otro</div></div>
+  </div>
+  <input type="hidden" id="q-type" value="">
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 3 -->
+<div class="step-screen" data-step="3">
+  <div class="step-eyebrow">Paso 3 — Tu historia</div>
+  <h1 class="step-question">¿Qué ofreces y <em>qué te hace especial?</em></h1>
+  <p class="step-hint">Cuéntanos en tus propias palabras qué haces y por qué tu cliente debería elegirte.</p>
+  <div class="field-wrap"><textarea class="input-field" id="q-desc" placeholder="Ej: Hacemos tortas artesanales con ingredientes 100% naturales. Llevamos 8 años creando momentos dulces en Medellín…"></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 4 -->
+<div class="step-screen" data-step="4">
+  <div class="step-eyebrow">Paso 4 — Tus servicios</div>
+  <h1 class="step-question">¿Qué <em>productos o servicios</em> ofreces?</h1>
+  <p class="step-hint">Escribe hasta 4 separados por coma.</p>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-services" placeholder="Ej: Tortas personalizadas, Cupcakes, Postres para eventos, Desayunos sorpresa"></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 5 -->
+<div class="step-screen" data-step="5">
+  <div class="step-eyebrow">Paso 5 — Contacto</div>
+  <h1 class="step-question">¿Cómo te <em>encuentra</em> tu cliente?</h1>
+  <p class="step-hint">Tu número de WhatsApp o correo. También tu ciudad.</p>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-contact" placeholder="WhatsApp: +57 300 000 0000 o correo@tunegocio.com"></div>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-city" placeholder="Ciudad donde operas (Ej: Medellín, Bogotá, Cali…)"></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 6 -->
+<div class="step-screen" data-step="6">
+  <div class="step-eyebrow">Paso 6 — Tu estilo</div>
+  <h1 class="step-question">¿Cómo quieres que <em>se vea tu página?</em></h1>
+  <p class="step-hint">Elige la paleta que mejor representa la personalidad de tu negocio.</p>
+  <div class="palette-grid">
+    <div class="palette-card selected" onclick="selectPalette(this,'#4A5E3A','#D4A853','#F5F0E8')"><div class="palette-swatch" style="background:linear-gradient(135deg,#4A5E3A 50%,#D4A853 100%)"></div><div class="palette-name">Natural</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#6B4226','#D4A853','#FDF6EE')"><div class="palette-swatch" style="background:linear-gradient(135deg,#6B4226 50%,#D4A853 100%)"></div><div class="palette-name">Calidez</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#1C3A5E','#6EA8D0','#F0F6FF')"><div class="palette-swatch" style="background:linear-gradient(135deg,#1C3A5E 50%,#6EA8D0 100%)"></div><div class="palette-name">Profesional</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#2D2D2D','#E8C96A','#FAFAFA')"><div class="palette-swatch" style="background:linear-gradient(135deg,#2D2D2D 50%,#E8C96A 100%)"></div><div class="palette-name">Elegante</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#8B1A4A','#F2A7C3','#FFF5F9')"><div class="palette-swatch" style="background:linear-gradient(135deg,#8B1A4A 50%,#F2A7C3 100%)"></div><div class="palette-name">Romántico</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#1A5C4A','#7ECFAD','#F0FAF5')"><div class="palette-swatch" style="background:linear-gradient(135deg,#1A5C4A 50%,#7ECFAD 100%)"></div><div class="palette-name">Fresco</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#5C3A8A','#C9A8F0','#F8F5FF')"><div class="palette-swatch" style="background:linear-gradient(135deg,#5C3A8A 50%,#C9A8F0 100%)"></div><div class="palette-name">Creativo</div></div>
+    <div class="palette-card" onclick="selectPalette(this,'#C0392B','#F0A07A','#FFF7F5')"><div class="palette-swatch" style="background:linear-gradient(135deg,#C0392B 50%,#F0A07A 100%)"></div><div class="palette-name">Vibrante</div></div>
+  </div>
+  <input type="hidden" id="q-color1" value="#4A5E3A">
+  <input type="hidden" id="q-color2" value="#D4A853">
+  <input type="hidden" id="q-colorbg" value="#F5F0E8">
+
+  <div style="width:100%;background:var(--lino);border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-top:4px">
+    <div style="font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:14px">O escribe tus propios colores</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div>
+        <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:5px;font-weight:500">Principal</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="color" id="custom-c1" value="#4A5E3A" oninput="applyCustomColors()" style="width:36px;height:36px;border-radius:6px;border:1.5px solid var(--border);padding:2px;cursor:pointer;flex-shrink:0">
+          <input type="text" id="custom-c1-hex" value="#4A5E3A" maxlength="7" class="input-field" style="padding:8px 10px;font-size:.78rem" oninput="syncCustomColor('c1')" placeholder="#000000">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:5px;font-weight:500">Acento</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="color" id="custom-c2" value="#D4A853" oninput="applyCustomColors()" style="width:36px;height:36px;border-radius:6px;border:1.5px solid var(--border);padding:2px;cursor:pointer;flex-shrink:0">
+          <input type="text" id="custom-c2-hex" value="#D4A853" maxlength="7" class="input-field" style="padding:8px 10px;font-size:.78rem" oninput="syncCustomColor('c2')" placeholder="#000000">
+        </div>
+      </div>
+      <div>
+        <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:5px;font-weight:500">Fondo</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="color" id="custom-cbg" value="#F5F0E8" oninput="applyCustomColors()" style="width:36px;height:36px;border-radius:6px;border:1.5px solid var(--border);padding:2px;cursor:pointer;flex-shrink:0">
+          <input type="text" id="custom-cbg-hex" value="#F5F0E8" maxlength="7" class="input-field" style="padding:8px 10px;font-size:.78rem" oninput="syncCustomColor('cbg')" placeholder="#000000">
+        </div>
+      </div>
+    </div>
+    <div id="color-preview-bar" style="margin-top:14px;height:28px;border-radius:8px;background:linear-gradient(90deg,#4A5E3A 40%,#D4A853 70%,#F5F0E8 100%);transition:all .3s"></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 7 -->
+<div class="step-screen" data-step="7">
+  <div class="step-eyebrow">Paso 7 — Tu mensaje</div>
+  <h1 class="step-question">¿Cuál es tu <em>frase estrella?</em></h1>
+  <p class="step-hint">El mensaje principal de tu página. Si lo dejas en blanco lo creamos por ti.</p>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-tagline" placeholder='Ej: "El sabor que hace especial tu momento"' maxlength="90"></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 8 -->
+<div class="step-screen" data-step="8">
+  <div class="step-eyebrow">Paso 8 — Botón de acción</div>
+  <h1 class="step-question">¿A dónde llevas <em>a tu cliente?</em></h1>
+  <p class="step-hint">Este botón aparecerá destacado en tu página.</p>
+  <div class="options-grid" style="margin-bottom:20px">
+    <div class="option-card" onclick="selectCTA(this,'whatsapp')"><div class="opt-icon">💬</div><div class="opt-text">WhatsApp<br><span style="font-size:.75rem;color:var(--ceniza);font-weight:400">Chat directo</span></div></div>
+    <div class="option-card" onclick="selectCTA(this,'instagram')"><div class="opt-icon">📸</div><div class="opt-text">Instagram<br><span style="font-size:.75rem;color:var(--ceniza);font-weight:400">Perfil o post</span></div></div>
+    <div class="option-card" onclick="selectCTA(this,'formulario')"><div class="opt-icon">📋</div><div class="opt-text">Formulario<br><span style="font-size:.75rem;color:var(--ceniza);font-weight:400">Google Forms, Tally…</span></div></div>
+    <div class="option-card" onclick="selectCTA(this,'otro')"><div class="opt-icon">🔗</div><div class="opt-text">Otro link<br><span style="font-size:.75rem;color:var(--ceniza);font-weight:400">Cualquier URL</span></div></div>
+  </div>
+  <input type="hidden" id="q-cta-type" value="">
+  <div id="cta-whatsapp-fields" class="cta-fields" style="display:none">
+    <div class="field-wrap"><input type="text" class="input-field" id="q-cta-wa-number" placeholder="Número WhatsApp Ej: +57 300 123 4567"></div>
+    <div class="field-wrap"><input type="text" class="input-field" id="q-cta-wa-msg" placeholder="Mensaje predefinido (opcional)" maxlength="120"></div>
+  </div>
+  <div id="cta-instagram-fields" class="cta-fields" style="display:none">
+    <div class="field-wrap"><input type="text" class="input-field" id="q-cta-ig" placeholder="@usuario o URL completa"></div>
+  </div>
+  <div id="cta-formulario-fields" class="cta-fields" style="display:none">
+    <div class="field-wrap"><input type="text" class="input-field" id="q-cta-form" placeholder="URL del formulario"></div>
+  </div>
+  <div id="cta-otro-fields" class="cta-fields" style="display:none">
+    <div class="field-wrap"><input type="text" class="input-field" id="q-cta-url" placeholder="URL completa https://…"></div>
+  </div>
+  <div class="field-wrap"><input type="text" class="input-field" id="q-cta-label" placeholder='Texto del botón Ej: "Pedir ahora", "Reservar"' maxlength="40"></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 9 -->
+<div class="step-screen" data-step="9">
+  <div class="step-eyebrow">Paso 9 — Imágenes</div>
+  <h1 class="step-question">Agrega tu <em>logo y foto</em> de portada</h1>
+  <p class="step-hint">Ambas son opcionales.</p>
+  <div class="info-note">📱 <strong>¿No abre la galería?</strong> Esta función requiere que la app esté publicada en Netlify. Puedes continuar sin fotos.</div>
+  <div class="upload-row">
+    <label class="upload-box" for="q-logo">
+      <div class="upload-preview" id="logo-preview"><div class="upload-icon">🏷️</div><div class="upload-label">Logo del negocio</div><div class="upload-hint">PNG o JPG cuadrado</div></div>
+      <input type="file" id="q-logo" accept="image/*" style="display:none" onchange="handleUpload(this,'logo-preview','logoB64')">
+    </label>
+    <label class="upload-box" for="q-cover">
+      <div class="upload-preview" id="cover-preview"><div class="upload-icon">🖼️</div><div class="upload-label">Foto de portada</div><div class="upload-hint">Local, producto o equipo</div></div>
+      <input type="file" id="q-cover" accept="image/*" style="display:none" onchange="handleUpload(this,'cover-preview','coverB64')">
+    </label>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 10 -->
+<div class="step-screen" data-step="10">
+  <div class="step-eyebrow">Paso 10 — Galería</div>
+  <h1 class="step-question">Muestra tu <em>trabajo</em> con fotos</h1>
+  <p class="step-hint">Hasta 3 fotos de tus productos o local. Opcional.</p>
+  <div class="info-note">📱 <strong>¿No abre la galería?</strong> Publica la app en Netlify para habilitar la subida de fotos.</div>
+  <div class="gallery-grid">
+    <label class="gallery-box" for="q-gal1"><div class="gallery-preview" id="gal1-preview"><div class="upload-icon">📷</div><div class="upload-hint">Foto 1</div></div><input type="file" id="q-gal1" accept="image/*" style="display:none" onchange="handleUpload(this,'gal1-preview','gal1B64')"></label>
+    <label class="gallery-box" for="q-gal2"><div class="gallery-preview" id="gal2-preview"><div class="upload-icon">📷</div><div class="upload-hint">Foto 2</div></div><input type="file" id="q-gal2" accept="image/*" style="display:none" onchange="handleUpload(this,'gal2-preview','gal2B64')"></label>
+    <label class="gallery-box" for="q-gal3"><div class="gallery-preview" id="gal3-preview"><div class="upload-icon">📷</div><div class="upload-hint">Foto 3</div></div><input type="file" id="q-gal3" accept="image/*" style="display:none" onchange="handleUpload(this,'gal3-preview','gal3B64')"></label>
+  </div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 11 -->
+<div class="step-screen" data-step="11">
+  <div class="step-eyebrow">Paso 11 — Horario (opcional)</div>
+  <h1 class="step-question">¿Cuál es tu <em>horario</em> de atención?</h1>
+  <p class="step-hint">Escríbelo como quieras. Si lo dejas vacío, no aparecerá en tu página.</p>
+  <div class="field-wrap"><textarea class="input-field" id="q-horario" placeholder="Ej: Lunes a viernes de 8am a 6pm&#10;Sábados de 9am a 2pm&#10;Domingos cerrado"></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 12 -->
+<div class="step-screen" data-step="12">
+  <div class="step-eyebrow">Paso 12 — Precios (opcional)</div>
+  <h1 class="step-question">¿Cuánto <em>cuestan</em> tus servicios?</h1>
+  <p class="step-hint">Hasta 4 servicios con precio y un rango general. Todo opcional.</p>
+  <div class="precios-grid">
+    <div class="precio-row"><input type="text" class="input-field precio-nombre" placeholder="Nombre del servicio" maxlength="40"><input type="text" class="input-field precio-valor" placeholder="Precio" maxlength="20"></div>
+    <div class="precio-row"><input type="text" class="input-field precio-nombre" placeholder="Nombre del servicio" maxlength="40"><input type="text" class="input-field precio-valor" placeholder="Precio" maxlength="20"></div>
+    <div class="precio-row"><input type="text" class="input-field precio-nombre" placeholder="Nombre del servicio" maxlength="40"><input type="text" class="input-field precio-valor" placeholder="Precio" maxlength="20"></div>
+    <div class="precio-row"><input type="text" class="input-field precio-nombre" placeholder="Nombre del servicio" maxlength="40"><input type="text" class="input-field precio-valor" placeholder="Precio" maxlength="20"></div>
+  </div>
+  <div class="field-wrap" style="margin-top:14px"><input type="text" class="input-field" id="q-precio-rango" placeholder="Rango general Ej: Precios desde $40.000 · Consulta gratis" maxlength="80"></div>
+  <div class="nav-row"><button class="btn-back" onclick="prevStep()">← Atrás</button><button class="btn-next" onclick="nextStep()">Continuar →</button></div>
+</div>
+
+<!-- PASO 13 -->
+<div class="step-screen" data-step="13">
+  <div class="step-eyebrow">Paso 13 — Testimonio (opcional)</div>
+  <h1 class="step-question">¿Qué dice un <em>cliente feliz?</em></h1>
+  <p class="step-hint">Un testimonio real genera confianza. Si lo dejas vacío, no aparecerá.</p>
+  <div class="testimonio-card">
+    <div class="testimonio-icon">💬</div>
+    <div class="field-wrap"><textarea class="input-field" id="q-testi-frase" placeholder="Ej: Quedé encantada con el resultado. ¡100% recomendado!" style="min-height:90px"></textarea></div>
+    <div class="testimonio-autor-row">
+      <div class="field-wrap"><input type="text" class="input-field" id="q-testi-nombre" placeholder="Nombre del cliente" maxlength="50"></div>
+      <div class="field-wrap"><input type="text" class="input-field" id="q-testi-cargo" placeholder="Ciudad o descripción" maxlength="50"></div>
+    </div>
+  </div>
+  <button class="btn-generate" onclick="generatePage()"><span>🌱</span> Hacer crecer mi página</button>
+  <div style="text-align:center;margin-top:12px"><button class="btn-back" onclick="prevStep()">← Atrás</button></div>
+</div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loader-plant"><div class="loader-ring"></div><div class="loader-center">🌱</div></div>
+  <div class="loading-headline">Sembrando tu página…</div>
+  <div class="loading-steps">
+    <div class="ls-item active" id="ls1"><div class="ls-dot"></div>Analizando tu negocio</div>
+    <div class="ls-item" id="ls2"><div class="ls-dot"></div>Diseñando la estructura</div>
+    <div class="ls-item" id="ls3"><div class="ls-dot"></div>Aplicando tu paleta de color</div>
+    <div class="ls-item" id="ls4"><div class="ls-dot"></div>Escribiendo el contenido</div>
+    <div class="ls-item" id="ls5"><div class="ls-dot"></div>Puliendo los detalles</div>
+  </div>
+  <div class="loading-sub">Esto toma unos segundos…</div>
+</div>
+
+<!-- RESULT -->
+<div id="result-screen">
+
+  <!-- PASO A: Revisión del brief -->
+  <div id="result-review" style="width:100%;max-width:680px">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:3rem;margin-bottom:12px">📋</div>
+      <div class="result-title">Revisa tu información</div>
+      <div class="result-sub">Confirma que todo esté correcto antes de enviarnos tu solicitud.</div>
+    </div>
+
+    <!-- Brief cards -->
+    <div class="brief-grid" id="brief-display"></div>
+
+    <!-- Acuerdo -->
+    <div style="background:var(--lino);border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:20px">
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;font-size:.875rem;color:var(--ink);line-height:1.6">
+        <input type="checkbox" id="acepto-terminos" style="margin-top:3px;accent-color:var(--tierra);width:16px;height:16px;flex-shrink:0">
+        <span>Confirmo que la información ingresada es correcta y autorizo a <strong>Semilla Estudio</strong> a crear mi página web con estos datos. Entiendo que recibiré mi página en un plazo de <strong>48 horas hábiles</strong>.</span>
+      </label>
+    </div>
+
+    <button onclick="submitBrief()" class="btn-generate" style="margin-top:20px">
+      <span>🌱</span> Enviar solicitud a Semilla Estudio
+    </button>
+    <div style="text-align:center;margin-top:12px">
+      <button onclick="backToForm()" style="background:none;border:none;color:var(--ceniza);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer">← Volver y editar</button>
+    </div>
+  </div>
+
+  <!-- PASO B: Confirmación enviada -->
+  <div id="result-success" style="display:none;width:100%;max-width:560px;text-align:center">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:48px 36px;box-shadow:0 8px 32px var(--shadow)">
+      <div style="font-size:4rem;margin-bottom:20px">🎉</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:12px;color:var(--ink)">¡Solicitud enviada!</h2>
+      <p style="font-size:.95rem;color:var(--ceniza);line-height:1.7;margin-bottom:32px">Recibimos toda la información de <strong id="success-biz-name"></strong>. Nuestro equipo revisará tu solicitud y te entregará tu página web en <strong>48 horas hábiles</strong>.</p>
+
+      <!-- Timeline -->
+      <div style="text-align:left;margin-bottom:32px">
+        <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start">
+          <div style="width:32px;height:32px;background:var(--musgo);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;color:white">✓</div>
+          <div><div style="font-size:.875rem;font-weight:600;color:var(--ink)">Solicitud recibida</div><div style="font-size:.78rem;color:var(--ceniza)">Ahora mismo</div></div>
+        </div>
+        <div style="display:flex;gap:14px;margin-bottom:16px;align-items:flex-start">
+          <div style="width:32px;height:32px;background:var(--lino);border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">👀</div>
+          <div><div style="font-size:.875rem;font-weight:600;color:var(--ink)">Semilla revisa tu brief</div><div style="font-size:.78rem;color:var(--ceniza)">Primeras horas</div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="width:32px;height:32px;background:var(--lino);border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">🚀</div>
+          <div><div style="font-size:.875rem;font-weight:600;color:var(--ink)">Tu página web entregada</div><div style="font-size:.78rem;color:var(--ceniza)">Máximo 48 horas hábiles</div></div>
+        </div>
+      </div>
+
+      <a href="https://wa.me/573133366528" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:white;padding:16px 32px;border-radius:50px;font-family:'Jost',sans-serif;font-weight:700;font-size:.95rem;text-decoration:none;margin-bottom:12px">
+        💬 Hablar con Semilla Estudio
+      </a>
+      <button onclick="restartApp()" class="btn-restart" style="width:100%">↺ Crear otra página</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- NETLIFY MODAL -->
+<div class="modal-overlay" id="netlify-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeNetlifyModal()">✕</button>
+    <div id="netlify-step-token">
+      <div style="font-size:1.8rem;margin-bottom:12px">🚀</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:8px">Publicar en Netlify</h3>
+      <p style="font-size:.875rem;color:var(--ceniza);margin-bottom:20px;line-height:1.6">Necesitas un <strong>Personal Access Token</strong> gratuito de Netlify.</p>
+      <ol style="font-size:.82rem;color:#4a4540;line-height:2.2;margin-bottom:20px;padding-left:20px">
+        <li>Ve a <a href="https://app.netlify.com/user/applications" target="_blank" style="color:var(--tierra);font-weight:600">netlify.com → User settings → Applications</a></li>
+        <li>Clic en <strong>"New access token"</strong></li>
+        <li>Copia el token y pégalo aquí</li>
+      </ol>
+      <input type="password" id="netlify-token-input" class="input-field" placeholder="Pega tu token aquí…" style="margin-bottom:12px">
+      <input type="text" id="netlify-site-name" class="input-field" placeholder="Nombre del sitio (opcional)" maxlength="40" style="margin-bottom:16px">
+      <button onclick="deployToNetlify()" style="width:100%;padding:15px;background:var(--tierra);color:var(--lino);border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer">🚀 Publicar ahora</button>
+    </div>
+    <div id="netlify-step-deploying" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:2.5rem;margin-bottom:16px;animation:spin 1s linear infinite;display:inline-block">⚙️</div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600">Publicando tu página…</p>
+    </div>
+    <div id="netlify-step-success" style="display:none;text-align:center;padding:10px 0">
+      <div style="font-size:3rem;margin-bottom:16px">🎉</div>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:8px">¡Página publicada!</h3>
+      <a id="netlify-result-url" href="#" target="_blank" style="display:block;background:#f0faf5;border:1.5px solid var(--musgo);border-radius:10px;padding:14px;font-size:.9rem;font-weight:600;color:var(--musgo);word-break:break-all;text-decoration:none;margin:16px 0"></a>
+      <div style="display:flex;gap:10px">
+        <button onclick="copyNetlifyUrl()" style="flex:1;padding:12px;background:var(--musgo);color:white;border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer">📋 Copiar URL</button>
+        <button onclick="closeNetlifyModal()" style="flex:1;padding:12px;background:none;border:1.5px solid var(--border);border-radius:8px;font-family:'Jost',sans-serif;font-size:.85rem;color:var(--ceniza);cursor:pointer">Cerrar</button>
+      </div>
+    </div>
+    <div id="netlify-step-error" style="display:none;text-align:center;padding:10px 0">
+      <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:8px">Algo salió mal</p>
+      <p id="netlify-error-msg" style="font-size:.82rem;color:var(--ceniza);margin-bottom:20px;line-height:1.6"></p>
+      <button onclick="resetNetlifyModal()" style="padding:12px 24px;background:var(--tierra);color:var(--lino);border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer">Intentar de nuevo</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- AI CHAT BUBBLE -->
+<div id="chat-bubble" onclick="toggleChat()" style="position:fixed;bottom:24px;right:24px;z-index:500;width:52px;height:52px;background:var(--tierra);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(107,66,38,.35);transition:transform .2s;font-size:1.4rem" title="Asistente Semilla">🌱</div>
+
+<div id="chat-panel" style="display:none;position:fixed;bottom:88px;right:24px;z-index:500;width:320px;max-width:calc(100vw - 48px);background:var(--white);border:1.5px solid var(--border);border-radius:18px;box-shadow:0 16px 48px rgba(107,66,38,.18);flex-direction:column;overflow:hidden;max-height:480px">
+  <div style="background:var(--tierra);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem">🌱</div>
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:white">Asistente Semilla</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.7)">IA · siempre disponible</div>
+      </div>
+    </div>
+    <button onclick="toggleChat()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.2rem;cursor:pointer;line-height:1">✕</button>
+  </div>
+  <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:280px"></div>
+  <div style="padding:12px;border-top:1px solid var(--border);display:flex;gap:8px">
+    <input type="text" id="chat-input" placeholder="Escribe tu pregunta…" style="flex:1;padding:10px 14px;font-family:'Jost',sans-serif;font-size:.85rem;border:1.5px solid var(--border);border-radius:8px;outline:none;color:var(--ink);background:var(--white)" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()" style="padding:10px 14px;background:var(--tierra);color:white;border:none;border-radius:8px;cursor:pointer;font-size:.9rem;transition:background .2s">➤</button>
+  </div>
+</div>
+
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel" style="display:none;width:100%;max-width:860px">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700">Panel Admin 🌱</div>
+      <div style="font-size:.85rem;color:var(--ceniza);margin-top:4px">Semilla Estudio · la.contec24@gmail.com</div>
+    </div>
+    <button onclick="adminLogout()" style="padding:10px 20px;border-radius:8px;border:1.5px solid var(--border);background:none;font-family:'Jost',sans-serif;font-size:.85rem;color:var(--ceniza);cursor:pointer">Cerrar sesión</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav" style="margin-bottom:24px">
+    <button class="tab-btn active" id="admin-tab-users-btn" onclick="switchAdminTab('users')">👥 Usuarios</button>
+    <button class="tab-btn" id="admin-tab-briefs-btn" onclick="switchAdminTab('briefs')">📋 Briefs</button>
+  </div>
+
+  <!-- USERS TAB -->
+  <div id="admin-tab-users" style="display:block">
+
+    <!-- Create user form -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px">
+      <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:16px">➕ Crear nuevo usuario</div>
+      <div id="admin-create-error" style="display:none;background:#fff0f0;border:1.5px solid #e57373;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#c0392b;margin-bottom:12px"></div>
+      <div id="admin-create-success" style="display:none;background:#f0faf5;border:1.5px solid var(--musgo);border-radius:8px;padding:10px 14px;font-size:.82rem;color:var(--musgo);margin-bottom:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+        <div>
+          <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:4px;font-weight:500">Correo</label>
+          <input type="email" id="new-user-email" class="input-field" placeholder="cliente@correo.com">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:4px;font-weight:500">Contraseña</label>
+          <input type="text" id="new-user-pass" class="input-field" placeholder="Mín. 8 caracteres">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;color:var(--ceniza);margin-bottom:4px;font-weight:500">Negocio</label>
+          <input type="text" id="new-user-negocio" class="input-field" placeholder="Nombre del negocio">
+        </div>
+        <button onclick="createUser()" id="btn-create-user" style="padding:15px 20px;background:var(--tierra);color:var(--lino);border:none;border-radius:10px;font-family:'Jost',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap">Crear →</button>
+      </div>
+    </div>
+
+    <!-- Users list -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra)">Usuarios registrados</div>
+        <button onclick="loadUsers()" style="background:none;border:none;font-size:.8rem;color:var(--ceniza);cursor:pointer;font-family:'Jost',sans-serif">↺ Actualizar</button>
+      </div>
+      <div id="users-list" style="padding:12px"></div>
+    </div>
+  </div>
+
+  <!-- BRIEFS TAB -->
+  <div id="admin-tab-briefs" style="display:none">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra)">Briefs recibidos</div>
+        <button onclick="loadBriefs()" style="background:none;border:none;font-size:.8rem;color:var(--ceniza);cursor:pointer;font-family:'Jost',sans-serif">↺ Actualizar</button>
+      </div>
+      <div id="briefs-list" style="padding:12px"></div>
+    </div>
+  </div>
+
+</div>
+
+</main>
+</div>
+<script>
+const TOTAL = 13;
+const SAVE_KEY = 'semilla_v2';
+let cur = 1;
+let generatedHTML = '';
+let p1 = '#4A5E3A', p2 = '#D4A853', pbg = '#F5F0E8';
+let logoB64 = '', coverB64 = '', gal1B64 = '', gal2B64 = '', gal3B64 = '';
+
+
+// ════════════════════════════════════════
+// LOGIN + OTP
+// ════════════════════════════════════════
+const ADMIN_EMAIL = 'la.contec24@gmail.com';
+const MASTER_KEY = 'SemillaMaster2024!'; // Solo para acceso local de prueba
+let currentUserId = null;
+let currentUserNegocio = '';
+let currentUserRole = '';
+
+let otpTimerInterval = null;
+let currentLoginUser = '';
+let otpAttempts = 0;
+let otpBlocked = false;
+const OTP_MAX_ATTEMPTS = 3;
+const OTP_EXPIRE_SECS = 15 * 60; // 15 minutos
+let otpSecsLeft = OTP_EXPIRE_SECS;
+
+// ── STEP 1: Validar correo y clave ──
+async function doLogin() {
+  const email = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const btn   = document.getElementById('login-btn');
+
+  if (!email || !pass) {
+    errEl.textContent = 'Por favor ingresa tu correo y contraseña.';
+    errEl.style.display = 'block'; return;
+  }
+
+  errEl.style.display = 'none';
+  btn.textContent = 'Entrando…'; btn.disabled = true;
+
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+
+  if (isNetlify) {
+    // Producción: verificar en Supabase
+    try {
+      const res = await fetch('/.netlify/functions/auth-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Credenciales incorrectas');
+      currentUserId = data.id || null;
+      currentUserNegocio = data.negocio || '';
+      currentUserRole = data.role || 'client';
+      enterApp(email, data.role === 'admin', data.negocio);
+    } catch(e) {
+      errEl.textContent = e.message || 'Error de conexión. Intenta de nuevo.';
+      errEl.style.display = 'block';
+    } finally {
+      btn.textContent = 'Entrar →'; btn.disabled = false;
+    }
+  } else {
+    // Local: verificar admin o aceptar cualquier correo+clave para pruebas
+    const isAdmin = email === ADMIN_EMAIL && pass === MASTER_KEY;
+    const isLocalTest = pass.length >= 6; // cualquier clave de 6+ chars en local
+    if (isAdmin || isLocalTest) {
+      currentUserRole = isAdmin ? 'admin' : 'client';
+      currentUserNegocio = isAdmin ? 'Semilla Estudio' : email.split('@')[0];
+      enterApp(email, isAdmin, currentUserNegocio);
+    } else {
+      errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+      errEl.style.display = 'block';
+    }
+    btn.textContent = 'Entrar →'; btn.disabled = false;
+  }
+}
+
+function enterApp(user, isMaster) {
+  try { sessionStorage.setItem('semilla_auth', user); } catch(e) {}
+  document.getElementById('login-screen').style.display = 'none';
+  // Mostrar saludo una sola vez
+  if (chatHistory.length === 0) {
+    setTimeout(() => {
+      const msg = `¡Hola${isMaster ? ', administrador' : ''}! 👋 Soy el asistente de Semilla Estudio. Puedo ayudarte en cada paso. ¿Tienes alguna duda?`;
+      addChatMessage('bot', msg);
+      chatHistory.push({ role: 'assistant', content: msg });
+    }, 800);
+  }
+}
+
+// ── OTP INPUT NAVIGATION ──
+function otpInput(el, idx) {
+  el.value = el.value.replace(/[^0-9]/g, '');
+  if (el.value && idx < 5) {
+    document.querySelectorAll('.otp-box')[idx + 1].focus();
+  }
+  // Auto-verify when all filled
+  const boxes = document.querySelectorAll('.otp-box');
+  const code = Array.from(boxes).map(b => b.value).join('');
+  if (code.length === 6) setTimeout(verifyOTP, 200);
+
+  // Highlight active box
+  document.querySelectorAll('.otp-box').forEach(b => b.style.borderColor = 'var(--border)');
+  el.style.borderColor = 'var(--tierra)';
+}
+
+function otpKeydown(e, idx) {
+  if (e.key === 'Backspace') {
+    const boxes = document.querySelectorAll('.otp-box');
+    if (!boxes[idx].value && idx > 0) { boxes[idx - 1].focus(); boxes[idx - 1].value = ''; }
+  }
+  if (e.key === 'Enter') verifyOTP();
+}
+
+// ── STEP 2: Verificar OTP ──
+async function verifyOTP() {
+  if (otpBlocked) return;
+  const boxes = document.querySelectorAll('.otp-box');
+  const code = Array.from(boxes).map(b => b.value).join('');
+  const errEl = document.getElementById('otp-error');
+  const btn = document.getElementById('otp-verify-btn');
+
+  if (code.length < 6) {
+    errEl.textContent = 'Ingresa los 6 dígitos del código.';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.textContent = 'Verificando…';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch('/.netlify/functions/otp-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: currentLoginUser, code })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.valid) {
+      // ✅ Acceso concedido
+      clearInterval(otpTimerInterval);
+      document.getElementById('otp-success-msg').textContent = '✓ Código correcto. Entrando…';
+      document.getElementById('otp-success-msg').style.display = 'block';
+      setTimeout(() => enterApp(currentLoginUser, false), 600);
+
+    } else {
+      // ❌ Código incorrecto
+      otpAttempts++;
+      document.querySelectorAll('.otp-box').forEach(b => { b.value = ''; b.style.borderColor = '#e57373'; });
+      setTimeout(() => document.querySelectorAll('.otp-box').forEach(b => b.style.borderColor = 'var(--border)'), 1000);
+
+      if (otpAttempts >= OTP_MAX_ATTEMPTS) {
+        otpBlocked = true;
+        clearInterval(otpTimerInterval);
+        errEl.textContent = '🚫 Demasiados intentos fallidos. Espera 10 minutos e intenta de nuevo.';
+        errEl.style.display = 'block';
+        btn.disabled = true;
+        document.getElementById('otp-resend-btn').disabled = true;
+        // Desbloquear después de 10 minutos
+        setTimeout(() => {
+          otpBlocked = false; otpAttempts = 0;
+          btn.disabled = false;
+          document.getElementById('otp-resend-btn').disabled = false;
+          errEl.style.display = 'none';
+          backToStep1();
+        }, 10 * 60 * 1000);
+      } else {
+        errEl.textContent = `Código incorrecto. Te quedan ${OTP_MAX_ATTEMPTS - otpAttempts} intento${OTP_MAX_ATTEMPTS - otpAttempts !== 1 ? 's' : ''}.`;
+        errEl.style.display = 'block';
+        document.querySelectorAll('.otp-box')[0].focus();
+      }
+    }
+  } catch(e) {
+    errEl.textContent = 'Error verificando el código. Intenta de nuevo.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Verificar código';
+    btn.disabled = false;
+  }
+}
+
+// ── TIMER ──
+function startOtpTimer() {
+  otpSecsLeft = OTP_EXPIRE_SECS;
+  clearInterval(otpTimerInterval);
+  updateTimerDisplay();
+  otpTimerInterval = setInterval(() => {
+    otpSecsLeft--;
+    updateTimerDisplay();
+    if (otpSecsLeft <= 0) {
+      clearInterval(otpTimerInterval);
+      document.getElementById('otp-error').textContent = 'El código expiró. Solicita uno nuevo.';
+      document.getElementById('otp-error').style.display = 'block';
+      document.getElementById('otp-verify-btn').disabled = true;
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(otpSecsLeft / 60).toString().padStart(2, '0');
+  const s = (otpSecsLeft % 60).toString().padStart(2, '0');
+  const el = document.getElementById('otp-timer');
+  if (el) {
+    el.textContent = `${m}:${s}`;
+    el.style.color = otpSecsLeft < 60 ? '#e57373' : 'var(--tierra)';
+  }
+}
+
+// ── REENVIAR OTP ──
+async function resendOTP() {
+  const btn = document.getElementById('otp-resend-btn');
+  btn.textContent = 'Enviando…'; btn.disabled = true;
+  const userData = USERS[currentLoginUser];
+  const emailTo = userData?.email || 'admin@semillaestudio.co';
+  try {
+    await fetch('/.netlify/functions/otp-send', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: currentLoginUser, email: emailTo })
+    });
+    otpAttempts = 0;
+    document.querySelectorAll('.otp-box').forEach(b => { b.value = ''; b.style.borderColor = 'var(--border)'; });
+    document.getElementById('otp-error').style.display = 'none';
+    document.getElementById('otp-success-msg').textContent = '✓ Nuevo código enviado.';
+    document.getElementById('otp-success-msg').style.display = 'block';
+    document.getElementById('otp-verify-btn').disabled = false;
+    startOtpTimer();
+    setTimeout(() => { document.getElementById('otp-success-msg').style.display = 'none'; }, 3000);
+    document.querySelectorAll('.otp-box')[0].focus();
+  } catch(e) {
+    document.getElementById('otp-error').textContent = 'Error reenviando. Intenta de nuevo.';
+    document.getElementById('otp-error').style.display = 'block';
+  } finally {
+    btn.textContent = 'Reenviar código'; btn.disabled = false;
+  }
+}
+
+function backToStep1() {
+  clearInterval(otpTimerInterval);
+  document.getElementById('login-step2').style.display = 'none';
+  document.getElementById('login-step1').style.display = 'block';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function checkSession() {
+  try {
+    const raw = sessionStorage.getItem('semilla_auth');
+    if (!raw) return;
+    const auth = JSON.parse(raw);
+    if (auth && auth.email) {
+      document.getElementById('login-screen').style.display = 'none';
+      currentUserRole = auth.isAdmin ? 'admin' : 'client';
+      currentUserNegocio = auth.negocio || '';
+      if (auth.isAdmin) showAdminPanel();
+    }
+  } catch(e) {}
+}
+
+// ════════════════════════════════════════
+// CHAT AGENT
+// ════════════════════════════════════════
+let chatOpen = false;
+let chatHistory = [];
+
+const STEP_CONTEXT = {
+  1: 'el usuario está escribiendo el nombre de su negocio',
+  2: 'el usuario está eligiendo el tipo de negocio',
+  3: 'el usuario está describiendo su negocio y qué lo hace especial',
+  4: 'el usuario está listando sus servicios o productos',
+  5: 'el usuario está ingresando su información de contacto y ciudad',
+  6: 'el usuario está eligiendo la paleta de colores de su página',
+  7: 'el usuario está escribiendo su frase principal o slogan',
+  8: 'el usuario está configurando el botón de acción de su página',
+  9: 'el usuario está subiendo el logo y foto de portada',
+  10: 'el usuario está subiendo fotos para la galería',
+  11: 'el usuario está ingresando su horario de atención',
+  12: 'el usuario está ingresando sus precios',
+  13: 'el usuario está agregando un testimonio de cliente',
+};
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById('chat-panel');
+  const bubble = document.getElementById('chat-bubble');
+  panel.style.display = chatOpen ? 'flex' : 'none';
+  panel.style.flexDirection = 'column';
+  bubble.style.transform = chatOpen ? 'scale(0.9)' : 'scale(1)';
+  // El saludo lo maneja enterApp, aquí solo abrimos el panel
+  if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 100);
+}
+
+function addChatMessage(role, text) {
+  const el = document.getElementById('chat-messages');
+  const isBot = role === 'bot';
+  const div = document.createElement('div');
+  div.style.cssText = `display:flex;justify-content:${isBot ? 'flex-start' : 'flex-end'};animation:rise .3s ease`;
+  div.innerHTML = `<div style="max-width:85%;padding:10px 14px;border-radius:${isBot ? '4px 14px 14px 14px' : '14px 4px 14px 14px'};background:${isBot ? 'var(--lino)' : 'var(--tierra)'};color:${isBot ? 'var(--ink)' : 'white'};font-size:.82rem;line-height:1.5;border:${isBot ? '1px solid var(--border)' : 'none'}">${text}</div>`;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function showTyping() {
+  const el = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.id = 'chat-typing';
+  div.style.cssText = 'display:flex;justify-content:flex-start';
+  div.innerHTML = `<div style="padding:10px 16px;border-radius:4px 14px 14px 14px;background:var(--lino);border:1px solid var(--border);font-size:.9rem;color:var(--ceniza)">● ● ●</div>`;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('chat-typing');
+  if (t) t.remove();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  addChatMessage('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+  showTyping();
+
+  const stepCtx = STEP_CONTEXT[cur] || 'el usuario está en la app de Semilla Estudio';
+  const systemPrompt = `Eres el asistente virtual de Semilla Estudio, una agencia colombiana de diseño web para pequeños negocios. Tu rol es ayudar a los usuarios a crear su página web respondiendo sus dudas de forma cálida, clara y en español colombiano informal. 
+Contexto actual: ${stepCtx}.
+El nombre del negocio ingresado hasta ahora es: "${document.getElementById('q-name')?.value || 'aún no ingresado'}".
+Responde de forma concisa (máximo 3 oraciones). Si te preguntan algo técnico, simplifica. Si no sabes algo, sugiere contactar a Semilla Estudio por WhatsApp.`;
+
+  try {
+    const host = window.location.hostname;
+    const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                      (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+
+    if (isNetlify) {
+      // Producción: usar Function de Netlify
+      const res = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory, system: systemPrompt })
+      });
+      if (!res.ok) throw new Error('Error del servidor');
+      const data = await res.json();
+      removeTyping();
+      const reply = (data.content && data.content[0]) ? data.content[0].text : 'En este momento no puedo responder. Intenta de nuevo.';
+      addChatMessage('bot', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } else {
+      // Local: usar API de Anthropic directamente para pruebas
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 300,
+          system: systemPrompt,
+          messages: chatHistory.slice(-10)
+        })
+      });
+      if (!res.ok) throw new Error('Error API');
+      const data = await res.json();
+      removeTyping();
+      const reply = (data.content && data.content[0]) ? data.content[0].text : 'En este momento no puedo responder.';
+      addChatMessage('bot', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    }
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+  } catch(e) {
+    removeTyping();
+    addChatMessage('bot', 'Ups, tuve un problema. Intenta de nuevo o escríbenos por WhatsApp. 😊');
+  }
+}
+
+// ════════════════════════════════════════
+// CUSTOM COLORS
+// ════════════════════════════════════════
+function syncCustomColor(key) {
+  const hexEl = document.getElementById(`custom-${key}-hex`);
+  const pickerEl = document.getElementById(`custom-${key}`);
+  const val = hexEl.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+    pickerEl.value = val;
+    applyCustomColors();
+  }
+}
+
+function applyCustomColors() {
+  const c1 = document.getElementById('custom-c1').value;
+  const c2 = document.getElementById('custom-c2').value;
+  const cbg = document.getElementById('custom-cbg').value;
+
+  // Sync hex inputs
+  document.getElementById('custom-c1-hex').value = c1;
+  document.getElementById('custom-c2-hex').value = c2;
+  document.getElementById('custom-cbg-hex').value = cbg;
+
+  // Apply to globals
+  p1 = c1; p2 = c2; pbg = cbg;
+  document.getElementById('q-color1').value = c1;
+  document.getElementById('q-color2').value = c2;
+  document.getElementById('q-colorbg').value = cbg;
+
+  // Deselect palette cards
+  document.querySelectorAll('.palette-card').forEach(c => c.classList.remove('selected'));
+
+  // Update preview bar
+  const bar = document.getElementById('color-preview-bar');
+  if (bar) bar.style.background = `linear-gradient(90deg,${c1} 40%,${c2} 70%,${cbg} 100%)`;
+}
+
+
+// ════════════════════════════════════════
+// ADMIN PANEL
+// ════════════════════════════════════════
+function showAdminPanel() {
+  // Hide all step screens and header progress
+  document.querySelectorAll('.step-screen').forEach(s => s.style.display = 'none');
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('chat-bubble').style.display = 'none';
+  // Show admin panel
+  const panel = document.getElementById('admin-panel');
+  panel.style.display = 'block';
+  panel.style.padding = '40px 20px';
+  loadUsers();
+}
+
+function adminLogout() {
+  try { sessionStorage.removeItem('semilla_auth'); } catch(e) {}
+  location.reload();
+}
+
+function switchAdminTab(tab) {
+  document.getElementById('admin-tab-users-btn').classList.toggle('active', tab === 'users');
+  document.getElementById('admin-tab-briefs-btn').classList.toggle('active', tab === 'briefs');
+  document.getElementById('admin-tab-users').style.display = tab === 'users' ? 'block' : 'none';
+  document.getElementById('admin-tab-briefs').style.display = tab === 'briefs' ? 'block' : 'none';
+  if (tab === 'briefs') loadBriefs();
+}
+
+async function loadUsers() {
+  const list = document.getElementById('users-list');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">Cargando…</div>';
+
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+
+  if (!isNetlify) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">Los usuarios se cargan desde Supabase.<br>Publica en Netlify para ver esta sección.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/admin-users', {
+      headers: { 'X-Admin-Key': MASTER_KEY }
+    });
+    const users = await res.json();
+    if (!users.length) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">No hay usuarios aún. Crea el primero arriba.</div>';
+      return;
+    }
+    list.innerHTML = users.map(u => `
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:14px 8px;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-size:.875rem;font-weight:600;color:var(--ink)">${u.negocio}</div>
+          <div style="font-size:.78rem;color:var(--ceniza)">${u.email}</div>
+          <div style="font-size:.72rem;color:var(--ceniza);margin-top:2px">Creado: ${new Date(u.creado_en).toLocaleDateString('es-CO')}${u.ultimo_acceso ? ' · Último acceso: '+new Date(u.ultimo_acceso).toLocaleDateString('es-CO') : ''}</div>
+        </div>
+        <div style="font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:50px;background:${u.activo ? '#f0faf5' : '#fff0f0'};color:${u.activo ? 'var(--musgo)' : '#c0392b'}">${u.activo ? 'Activo' : 'Inactivo'}</div>
+        <button onclick="toggleUser('${u.id}', ${!u.activo})" style="padding:6px 12px;border-radius:6px;border:1.5px solid var(--border);background:none;font-family:'Jost',sans-serif;font-size:.75rem;cursor:pointer;color:var(--ceniza)">${u.activo ? 'Desactivar' : 'Activar'}</button>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#c0392b;font-size:.85rem">Error cargando usuarios.</div>';
+  }
+}
+
+async function createUser() {
+  const email   = document.getElementById('new-user-email').value.trim();
+  const pass    = document.getElementById('new-user-pass').value.trim();
+  const negocio = document.getElementById('new-user-negocio').value.trim();
+  const errEl   = document.getElementById('admin-create-error');
+  const okEl    = document.getElementById('admin-create-success');
+  const btn     = document.getElementById('btn-create-user');
+
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+
+  if (!email || !pass || !negocio) {
+    errEl.textContent = 'Todos los campos son requeridos.';
+    errEl.style.display = 'block'; return;
+  }
+  if (pass.length < 8) {
+    errEl.textContent = 'La contraseña debe tener mínimo 8 caracteres.';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.textContent = 'Creando…'; btn.disabled = true;
+
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+
+  if (!isNetlify) {
+    errEl.textContent = 'Crea usuarios desde Netlify (requiere Supabase).';
+    errEl.style.display = 'block';
+    btn.textContent = 'Crear →'; btn.disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/admin-users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Key': MASTER_KEY },
+      body: JSON.stringify({ email, password: pass, negocio })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    okEl.textContent = `✓ Usuario creado: ${negocio} (${email})`;
+    okEl.style.display = 'block';
+    document.getElementById('new-user-email').value = '';
+    document.getElementById('new-user-pass').value = '';
+    document.getElementById('new-user-negocio').value = '';
+    loadUsers();
+  } catch(e) {
+    errEl.textContent = e.message || 'Error creando usuario.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Crear →'; btn.disabled = false;
+  }
+}
+
+async function toggleUser(id, activo) {
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+  if (!isNetlify) return;
+  await fetch('/.netlify/functions/admin-users', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Key': MASTER_KEY },
+    body: JSON.stringify({ id, activo })
+  });
+  loadUsers();
+}
+
+async function loadBriefs() {
+  const list = document.getElementById('briefs-list');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">Cargando…</div>';
+
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+
+  if (!isNetlify) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">Los briefs se cargan desde Supabase.<br>Publica en Netlify para ver esta sección.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/admin-briefs', {
+      headers: { 'X-Admin-Key': MASTER_KEY }
+    });
+    const briefs = await res.json();
+    if (!briefs.length) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--ceniza);font-size:.85rem">No hay briefs aún.</div>';
+      return;
+    }
+    list.innerHTML = briefs.map(b => `
+      <div style="padding:16px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--ink)">${b.negocio || 'Sin nombre'}</div>
+            <div style="font-size:.78rem;color:var(--ceniza)">${b.tipo || ''} · ${b.ciudad || ''} · ${new Date(b.enviado_en).toLocaleDateString('es-CO')}</div>
+          </div>
+          <a href="https://wa.me/573133366528?text=${encodeURIComponent('📋 Brief de '+b.negocio)}" target="_blank" style="font-size:.78rem;color:var(--musgo);font-weight:600;text-decoration:none">Ver en WhatsApp →</a>
+        </div>
+        <div style="font-size:.82rem;color:#4a4540;line-height:1.6;background:var(--lino);border-radius:8px;padding:10px 14px">
+          ${b.descripcion ? `<b>Descripción:</b> ${b.descripcion.substring(0,120)}${b.descripcion.length>120?'…':''}<br>` : ''}
+          ${b.servicios ? `<b>Servicios:</b> ${b.servicios}<br>` : ''}
+          ${b.contacto ? `<b>Contacto:</b> ${b.contacto}` : ''}
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:#c0392b;font-size:.85rem">Error cargando briefs.</div>';
+  }
+}
+
+// ── NAVIGATION ──
+function updateProgress() {
+  document.getElementById('progress').style.width = (cur / TOTAL * 100) + '%';
+  document.getElementById('step-counter').textContent = `Paso ${cur} de ${TOTAL}`;
+}
+function showStep(n) {
+  document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('loading-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.remove('active');
+  if(document.getElementById('result-review')) document.getElementById('result-review').style.display='block';
+  if(document.getElementById('result-success')) document.getElementById('result-success').style.display='none';
+  const t = document.querySelector(`[data-step="${n}"]`);
+  if (t) { void t.offsetWidth; t.classList.add('active'); }
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function nextStep() { if (cur < TOTAL) { try { saveProgress(); } catch(e){} cur++; showStep(cur); } }
+function prevStep() { if (cur > 1) { try { saveProgress(); } catch(e){} cur--; showStep(cur); } }
+
+// ── SELECTION HELPERS ──
+function selectOption(el, fid, val) {
+  el.closest('.options-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(fid).value = val;
+}
+function selectPalette(el, c1, c2, bg) {
+  document.querySelectorAll('.palette-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  p1 = c1; p2 = c2; pbg = bg;
+  document.getElementById('q-color1').value = c1;
+  document.getElementById('q-color2').value = c2;
+  document.getElementById('q-colorbg').value = bg;
+  // Sync custom pickers
+  const cc1 = document.getElementById('custom-c1'); if(cc1) cc1.value = c1;
+  const cc2 = document.getElementById('custom-c2'); if(cc2) cc2.value = c2;
+  const ccb = document.getElementById('custom-cbg'); if(ccb) ccb.value = bg;
+  const h1 = document.getElementById('custom-c1-hex'); if(h1) h1.value = c1;
+  const h2 = document.getElementById('custom-c2-hex'); if(h2) h2.value = c2;
+  const hb = document.getElementById('custom-cbg-hex'); if(hb) hb.value = bg;
+  const bar = document.getElementById('color-preview-bar');
+  if(bar) bar.style.background = `linear-gradient(90deg,${c1} 40%,${c2} 70%,${bg} 100%)`;
+}
+function selectCTA(el, type) {
+  el.closest('.options-grid').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('q-cta-type').value = type;
+  document.querySelectorAll('.cta-fields').forEach(f => f.style.display = 'none');
+  const map = { whatsapp: 'cta-whatsapp-fields', instagram: 'cta-instagram-fields', formulario: 'cta-formulario-fields', otro: 'cta-otro-fields' };
+  if (map[type]) document.getElementById(map[type]).style.display = 'block';
+  const labels = { whatsapp: 'Escríbenos por WhatsApp', instagram: 'Síguenos en Instagram', formulario: 'Completar formulario', otro: 'Ver más' };
+  const lbl = document.getElementById('q-cta-label');
+  if (!lbl.value) lbl.value = labels[type] || '';
+}
+function buildCTALink() {
+  const type = document.getElementById('q-cta-type').value;
+  if (type === 'whatsapp') {
+    const num = (document.getElementById('q-cta-wa-number').value || '').replace(/\D/g, '');
+    const msg = encodeURIComponent(document.getElementById('q-cta-wa-msg').value || '');
+    return num ? `https://wa.me/${num}${msg ? '?text=' + msg : ''}` : '';
+  }
+  if (type === 'instagram') {
+    let ig = document.getElementById('q-cta-ig').value.trim();
+    if (ig.startsWith('http')) return ig;
+    return ig ? `https://instagram.com/${ig.replace('@', '')}` : '';
+  }
+  if (type === 'formulario') return document.getElementById('q-cta-form').value.trim();
+  if (type === 'otro') return document.getElementById('q-cta-url').value.trim();
+  return '';
+}
+
+// ── IMAGE UPLOAD ──
+function handleUpload(input, previewId, varName) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = varName === 'logoB64' ? 300 : 900;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const b64 = canvas.toDataURL('image/jpeg', 0.82);
+      if (varName === 'logoB64') logoB64 = b64;
+      else if (varName === 'coverB64') coverB64 = b64;
+      else if (varName === 'gal1B64') gal1B64 = b64;
+      else if (varName === 'gal2B64') gal2B64 = b64;
+      else if (varName === 'gal3B64') gal3B64 = b64;
+      const preview = document.getElementById(previewId);
+      const box = input.closest('label');
+      preview.innerHTML = `<img src="${b64}" alt="preview"><button class="upload-remove" onclick="removeImage(event,'${previewId}','${varName}')">✕</button>`;
+      if (box) box.classList.add('has-image');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function removeImage(e, previewId, varName) {
+  e.stopPropagation();
+  if (varName === 'logoB64') logoB64 = '';
+  else if (varName === 'coverB64') coverB64 = '';
+  else if (varName === 'gal1B64') gal1B64 = '';
+  else if (varName === 'gal2B64') gal2B64 = '';
+  else if (varName === 'gal3B64') gal3B64 = '';
+  const preview = document.getElementById(previewId);
+  const box = preview.closest('label');
+  const isGallery = box && box.classList.contains('gallery-box');
+  preview.innerHTML = isGallery
+    ? '<div class="upload-icon">📷</div><div class="upload-hint">Foto</div>'
+    : `<div class="upload-icon">${varName === 'logoB64' ? '🏷️' : '🖼️'}</div><div class="upload-label">${varName === 'logoB64' ? 'Logo del negocio' : 'Foto de portada'}</div><div class="upload-hint">${varName === 'logoB64' ? 'PNG o JPG cuadrado' : 'Local, producto o equipo'}</div>`;
+  if (box) box.classList.remove('has-image');
+}
+
+// ── LOADING ANIMATION ──
+function animateLoadingSteps() {
+  let s = 1;
+  const iv = setInterval(() => {
+    if (s > 1) { const p = document.getElementById('ls' + (s - 1)); if (p) { p.classList.remove('active'); p.classList.add('done'); } }
+    const c = document.getElementById('ls' + s); if (c) c.classList.add('active');
+    s++; if (s > 5) clearInterval(iv);
+  }, 1000);
+}
+
+// ── GENERATE ──
+async function generatePage() {
+  const name = document.getElementById('q-name').value.trim() || 'Mi Negocio';
+  const type = document.getElementById('q-type').value || 'Negocio';
+  const desc = document.getElementById('q-desc').value.trim() || 'Somos un negocio comprometido con la calidad.';
+  const svcs = document.getElementById('q-services').value.trim() || 'Servicio 1, Servicio 2, Servicio 3';
+  const contact = document.getElementById('q-contact').value.trim() || '+57 300 000 0000';
+  const city = document.getElementById('q-city').value.trim() || 'Colombia';
+  const tagline = document.getElementById('q-tagline').value.trim();
+  const ctaLink = buildCTALink();
+  const ctaLabel = document.getElementById('q-cta-label').value.trim() || 'Contáctanos';
+  const imgs = { logo: logoB64, cover: coverB64, gal: [gal1B64, gal2B64, gal3B64].filter(Boolean) };
+  const horario = document.getElementById('q-horario').value.trim();
+  const precioRango = document.getElementById('q-precio-rango').value.trim();
+  const precios = Array.from(document.querySelectorAll('.precio-row')).map(row => {
+    const n = row.querySelector('.precio-nombre').value.trim();
+    const v = row.querySelector('.precio-valor').value.trim();
+    return n || v ? { nombre: n, valor: v } : null;
+  }).filter(Boolean);
+  const testimonio = {
+    frase: document.getElementById('q-testi-frase').value.trim(),
+    nombre: document.getElementById('q-testi-nombre').value.trim(),
+    cargo: document.getElementById('q-testi-cargo').value.trim()
+  };
+
+  document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+  const loadEl = document.getElementById('loading-screen');
+  loadEl.classList.add('active');
+  for (let i = 1; i <= 5; i++) { const el = document.getElementById('ls' + i); if (el) { el.classList.remove('active', 'done'); } }
+  animateLoadingSteps();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const isWA = /^\+?\d[\d\s]{7,}/.test(contact.replace(/\s/g, ''));
+  const cLink = isWA ? `https://wa.me/${contact.replace(/\D/g, '')}` : `mailto:${contact}`;
+  const finalTagline = tagline || `La mejor opción en ${type.toLowerCase()} en ${city}`;
+  const serviceList = svcs.split(',').map(s => s.trim()).filter(Boolean);
+
+  // Generate base page immediately
+  generatedHTML = buildPage(name, type, desc, serviceList, contact, cLink, city, finalTagline, p1, p2, pbg, ctaLink || cLink, ctaLabel, imgs, horario, precios, precioRango, testimonio);
+
+  // Try to enhance with AI
+  try {
+    const prompt = `Crea una página web HTML completa y HERMOSA para este negocio colombiano.
+DEVUELVE ÚNICAMENTE código HTML completo desde <!DOCTYPE html> hasta </html>. Sin explicaciones, sin markdown, sin backticks.
+Nombre: ${name} | Tipo: ${type} | Ciudad: ${city}
+Descripción: ${desc}
+Servicios: ${serviceList.join(', ')}
+Contacto: ${contact} | Link: ${ctaLink || cLink}
+Frase: ${finalTagline}
+Color primario: ${p1} | Acento: ${p2} | Fondo: ${pbg}
+Botón CTA: "${ctaLabel}"
+${horario ? 'Horario: ' + horario : ''}
+${precios.length ? 'Precios: ' + precios.map(p => p.nombre + ' ' + p.valor).join(', ') : ''}
+${testimonio.frase ? 'Testimonio: "' + testimonio.frase + '" — ' + testimonio.nombre : ''}
+Requisitos: HTML5, CSS inline en style, sin JS externo, Google Fonts, responsive mobile-first, animaciones CSS sutiles, diseño moderno y único.`;
+
+    const res = await fetch('/.netlify/functions/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    if (res.status === 429) {
+      const err = await res.json();
+      alert(err.error || 'Límite de generaciones alcanzado. Intenta en una hora.');
+      showStep(TOTAL);
+      return;
+    }
+    if (!res.ok) throw new Error('Error del servidor');
+    const data = await res.json();
+    let html = (data.content && data.content[0]) ? data.content[0].text || '' : '';
+    html = html.replace(/```html\s*/gi, '').replace(/```\s*/g, '').trim();
+    if (html && html.includes('<!DOCTYPE') && html.includes('</html>') && html.length > 2000) {
+      generatedHTML = html;
+    }
+  } catch (e) { /* use base page */ }
+
+  showResult(name);
+}
+
+// ── BUILD PAGE (FALLBACK) ──
+function buildPage(name, type, desc, services, contact, cLink, city, tagline, c1, c2, cbg, ctaHref, ctaText, imgs, horario, precios, precioRango, testimonio) {
+  imgs = imgs || { logo: '', cover: '', gal: [] };
+  horario = horario || ''; precios = precios || []; precioRango = precioRango || '';
+  testimonio = testimonio || { frase: '', nombre: '', cargo: '' };
+  const icons = ['🌿', '⭐', '✦', '🎯', '💎', '🌸', '🔥', '✨'];
+  const cards = services.map((s, i) => `<div class="card"><div class="card-icon">${icons[i % icons.length]}</div><h3 class="card-title">${s}</h3><p class="card-sub">Disponible en ${city}</p></div>`).join('');
+
+  const horarioSection = horario ? `
+<section style="padding:60px 24px;background:${cbg}">
+  <div style="max-width:1040px;margin:0 auto">
+    <div style="font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:${c1};margin-bottom:14px">Horario</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:20px">⏰ Horario de atención</h2>
+    <div style="background:white;border-radius:14px;padding:20px 24px;border:1.5px solid ${c1}22;font-size:.95rem;line-height:2;white-space:pre-line">${horario}</div>
+  </div>
+</section>` : '';
+
+  const preciosSection = (precios.length || precioRango) ? `
+<section style="padding:60px 24px;background:white">
+  <div style="max-width:1040px;margin:0 auto">
+    <div style="font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:${c1};margin-bottom:14px">Tarifas</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;margin-bottom:28px">Nuestros precios</h2>
+    ${precioRango ? `<div style="display:inline-block;background:${c2}22;border:1.5px solid ${c2};color:${c1};border-radius:50px;padding:8px 20px;font-size:.88rem;font-weight:600;margin-bottom:24px">${precioRango}</div>` : ''}
+    ${precios.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">${precios.map(p => `<div style="background:${cbg};border-radius:14px;padding:22px 20px;border:1.5px solid ${c1}22;display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="font-size:.95rem;font-weight:500">${p.nombre}</span><span style="font-size:1rem;font-weight:700;color:${c1};white-space:nowrap">${p.valor}</span></div>`).join('')}</div>` : ''}
+  </div>
+</section>` : '';
+
+  const testiSection = testimonio.frase ? `
+<section style="padding:60px 24px;background:${c1}">
+  <div style="max-width:640px;margin:0 auto;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:16px;opacity:.6;color:white">"</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:white;line-height:1.5;margin-bottom:24px;font-style:italic">${testimonio.frase}</p>
+    <div style="width:40px;height:2px;background:${c2};margin:0 auto 16px"></div>
+    <div style="color:${c2};font-weight:600;font-size:.9rem">${testimonio.nombre}</div>
+    ${testimonio.cargo ? `<div style="color:rgba(255,255,255,.6);font-size:.8rem;margin-top:4px">${testimonio.cargo}</div>` : ''}
+  </div>
+</section>` : '';
+
+  const gallerySection = imgs.gal.length ? `
+<section style="padding:60px 24px;background:#fff">
+  <div style="max-width:1040px;margin:0 auto">
+    <div style="font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:${c1};margin-bottom:14px">Galería</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;margin-bottom:32px">Nuestro trabajo</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">${imgs.gal.map(src => `<div style="border-radius:14px;overflow:hidden;aspect-ratio:1"><img src="${src}" style="width:100%;height:100%;object-fit:cover" alt="galeria"></div>`).join('')}</div>
+  </div>
+</section>` : '';
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,800;1,600&family=Jost:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:#fff;color:#1a1a1a}
+nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(253,250,245,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:#1a1a1a;text-decoration:none}
+.nav-cta{background:${c1};color:white;padding:9px 20px;border-radius:50px;font-size:.8rem;font-weight:600;text-decoration:none}
+.hero{min-height:100vh;background:${c1};${imgs.cover ? `background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url(${imgs.cover});background-size:cover;background-position:center;` : ''}display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px}
+.hero-content{max-width:760px;animation:fadeUp .8s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:7px 20px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:28px}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,10vw,6rem);font-weight:800;line-height:1.0;color:white;margin-bottom:22px}
+.tagline{font-size:clamp(1rem,2.5vw,1.2rem);color:rgba(255,255,255,.82);max-width:560px;margin:0 auto 40px;line-height:1.65;font-weight:300}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;background:${c2};color:${c1};padding:16px 40px;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none}
+.sec{padding:80px 24px;max-width:1040px;margin:0 auto}
+.sec-bg{background:${cbg};padding:80px 24px}
+.sec-bg-inner{max-width:1040px;margin:0 auto}
+.sec-label{font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:${c1};margin-bottom:14px}
+h2{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;margin-bottom:20px;line-height:1.15}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:36px}
+.card{background:white;border-radius:16px;padding:28px 22px;border:1.5px solid rgba(0,0,0,.07);transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.card-icon{font-size:1.8rem;margin-bottom:12px}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:6px}
+.card-sub{font-size:.85rem;opacity:.6}
+.contact-sec{background:${c1};padding:80px 24px;text-align:center}
+.contact-sec h2{color:white}
+.contact-sub{color:rgba(255,255,255,.75);margin-top:8px;margin-bottom:32px}
+.contact-btn{display:inline-flex;align-items:center;gap:10px;background:${c2};color:${c1};padding:18px 44px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none}
+footer{text-align:center;padding:28px;font-size:.8rem;background:#111;color:#555}
+${imgs.logo ? '.logo-img{width:80px;height:80px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,.15);padding:8px;margin-bottom:20px}' : ''}
+
+  /* ─── BRIEF DISPLAY ─── */
+  .brief-grid { display:flex; flex-direction:column; gap:12px; width:100%; }
+  .brief-card { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:16px 20px; display:grid; grid-template-columns:28px 1fr; gap:12px; align-items:start; }
+  .brief-card-icon { font-size:1.2rem; margin-top:1px; }
+  .brief-card-label { font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--tierra); margin-bottom:4px; }
+  .brief-card-value { font-size:.9rem; color:var(--ink); line-height:1.5; }
+  .brief-card-empty { color:var(--ceniza); font-style:italic; font-size:.85rem; }
+
+@media(max-width:640px){nav{padding:14px 18px}h1{font-size:3rem}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="#" class="nav-brand">${name}</a>
+  <a href="${ctaHref}" class="nav-cta">${ctaText}</a>
+</nav>
+<section class="hero">
+  <div class="hero-content">
+    ${imgs.logo ? `<img src="${imgs.logo}" class="logo-img" alt="Logo">` : ''}
+    <div class="badge">${type} · ${city}</div>
+    <h1>${name}</h1>
+    <p class="tagline">${tagline}</p>
+    <a href="${ctaHref}" class="cta-btn">${ctaText}</a>
+  </div>
+</section>
+<div class="sec">
+  <div class="sec-label">Quiénes somos</div>
+  <h2>Nuestra historia</h2>
+  <p style="font-size:1.05rem;line-height:1.75;max-width:680px;opacity:.8">${desc}</p>
+</div>
+<div class="sec-bg">
+  <div class="sec-bg-inner">
+    <div class="sec-label">Lo que ofrecemos</div>
+    <h2>Nuestros servicios</h2>
+    <div class="grid">${cards}</div>
+  </div>
+</div>
+${horarioSection}
+${preciosSection}
+${testiSection}
+${gallerySection}
+<div class="contact-sec">
+  <h2>Hablemos</h2>
+  <p class="contact-sub">Estamos en ${city}, listos para atenderte.</p>
+  <a href="${ctaHref}" class="contact-btn">${ctaText}</a>
+</div>
+<footer>© ${new Date().getFullYear()} ${name} · ${city} · Hecho con Semilla Estudio</footer>
+</body></html>`;
+}
+
+// ── SHOW RESULT ──
+function showResult(name) {
+  document.getElementById('loading-screen').classList.remove('active');
+  document.getElementById('result-review').style.display = 'block';
+  document.getElementById('result-success').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('active');
+  renderBrief();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderBrief() {
+  const name     = document.getElementById('q-name').value.trim();
+  const type     = document.getElementById('q-type').value.trim();
+  const city     = document.getElementById('q-city').value.trim();
+  const desc     = document.getElementById('q-desc').value.trim();
+  const services = document.getElementById('q-services').value.trim();
+  const contact  = document.getElementById('q-contact').value.trim();
+  const tagline  = document.getElementById('q-tagline').value.trim();
+  const horario  = document.getElementById('q-horario').value.trim();
+  const precioRango = document.getElementById('q-precio-rango').value.trim();
+  const precios  = Array.from(document.querySelectorAll('.precio-row'))
+    .map(r => { const n=r.querySelector('.precio-nombre').value.trim(); const v=r.querySelector('.precio-valor').value.trim(); return n||v ? `${n} — ${v}` : null; })
+    .filter(Boolean).join(', ');
+  const testiFrase  = document.getElementById('q-testi-frase').value.trim();
+  const testiNombre = document.getElementById('q-testi-nombre').value.trim();
+  const ctaLabel = document.getElementById('q-cta-label').value.trim();
+  const ctaType  = document.getElementById('q-cta-type').value;
+
+  const items = [
+    { icon:'🏷️', label:'Negocio', value: name || null },
+    { icon:'📍', label:'Tipo y ciudad', value: [type,city].filter(Boolean).join(' · ') || null },
+    { icon:'✍️', label:'Descripción', value: desc || null },
+    { icon:'⭐', label:'Servicios', value: services || null },
+    { icon:'📞', label:'Contacto', value: contact || null },
+    { icon:'💬', label:'Frase principal', value: tagline || null },
+    { icon:'🔗', label:'Botón CTA', value: ctaLabel ? `"${ctaLabel}" (${ctaType||'link'})` : null },
+    { icon:'🎨', label:'Paleta de colores', value: `${p1} · ${p2} · ${pbg}` },
+    { icon:'⏰', label:'Horario', value: horario || null },
+    { icon:'💰', label:'Precios', value: [precioRango, precios].filter(Boolean).join(' | ') || null },
+    { icon:'⭐', label:'Testimonio', value: testiFrase ? `"${testiFrase}" — ${testiNombre}` : null },
+  ];
+
+  const grid = document.getElementById('brief-display');
+  grid.innerHTML = items.map(item => `
+    <div class="brief-card">
+      <div class="brief-card-icon">${item.icon}</div>
+      <div>
+        <div class="brief-card-label">${item.label}</div>
+        ${item.value
+          ? `<div class="brief-card-value">${item.value}</div>`
+          : `<div class="brief-card-empty">No ingresado</div>`}
+      </div>
+    </div>`).join('');
+}
+
+function backToForm() {
+  document.getElementById('result-screen').classList.remove('active');
+  if(document.getElementById('result-review')) document.getElementById('result-review').style.display='block';
+  if(document.getElementById('result-success')) document.getElementById('result-success').style.display='none';
+  // Volver al último paso
+  cur = TOTAL;
+  showStep(cur);
+}
+
+async function submitBrief() {
+  if (!document.getElementById('acepto-terminos').checked) {
+    alert('Por favor acepta los términos antes de enviar.');
+    return;
+  }
+
+  const name     = document.getElementById('q-name').value.trim() || 'Sin nombre';
+  const type     = document.getElementById('q-type').value.trim();
+  const city     = document.getElementById('q-city').value.trim();
+  const desc     = document.getElementById('q-desc').value.trim();
+  const services = document.getElementById('q-services').value.trim();
+  const contact  = document.getElementById('q-contact').value.trim();
+  const tagline  = document.getElementById('q-tagline').value.trim();
+  const horario  = document.getElementById('q-horario').value.trim();
+  const precioRango = document.getElementById('q-precio-rango').value.trim();
+  const precios  = Array.from(document.querySelectorAll('.precio-row'))
+    .map(r => { const n=r.querySelector('.precio-nombre').value.trim(); const v=r.querySelector('.precio-valor').value.trim(); return n&&v ? `${n}: ${v}` : null; })
+    .filter(Boolean).join(', ');
+  const testiFrase  = document.getElementById('q-testi-frase').value.trim();
+  const testiNombre = document.getElementById('q-testi-nombre').value.trim();
+  const testiCargo  = document.getElementById('q-testi-cargo').value.trim();
+  const ctaLabel = document.getElementById('q-cta-label').value.trim();
+  const ctaType  = document.getElementById('q-cta-type').value;
+  const ctaLink  = buildCTALink();
+
+  // Construir mensaje de WhatsApp para Semilla
+  const fecha = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const msg = `🌱 *NUEVO BRIEF — SEMILLA ESTUDIO*
+📅 ${fecha}
+
+*NEGOCIO:* ${name}
+*TIPO:* ${type || 'No especificado'}
+*CIUDAD:* ${city || 'No especificada'}
+
+*DESCRIPCIÓN:*
+${desc || 'No ingresada'}
+
+*SERVICIOS:* ${services || 'No ingresados'}
+*CONTACTO:* ${contact || 'No ingresado'}
+*FRASE:* ${tagline || 'No ingresada'}
+*BOTÓN CTA:* ${ctaLabel || 'No ingresado'} → ${ctaLink || ctaType || 'No definido'}
+*HORARIO:* ${horario || 'No ingresado'}
+*PRECIOS:* ${[precioRango, precios].filter(Boolean).join(' | ') || 'No ingresados'}
+*TESTIMONIO:* ${testiFrase ? `"${testiFrase}" — ${testiNombre}${testiCargo ? ', '+testiCargo : ''}` : 'No ingresado'}
+*PALETA:* ${p1} · ${p2} · ${pbg}
+
+_Enviado desde la app de Semilla Estudio_`;
+
+  // Abrir WhatsApp con el brief completo
+  const waUrl = `https://wa.me/573133366528?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+
+  // Mostrar pantalla de éxito
+  document.getElementById('brief-display').closest('#result-review').style.display = 'none';
+  document.getElementById('result-success').style.display = 'block';
+  document.getElementById('success-biz-name').textContent = name;
+
+  // Guardar en Supabase si estamos en producción
+  const host = window.location.hostname;
+  const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
+                    (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
+  if (isNetlify) {
+    try {
+      fetch('/.netlify/functions/brief-save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUserId,
+          brief: { name, type, city, desc, services, contact, tagline, ctaLabel, ctaLink,
+                   horario, precios: [precioRango, precios].filter(Boolean).join(' | '),
+                   testimonio: testiFrase ? `"${testiFrase}" — ${testiNombre}` : '',
+                   paleta: `${p1} · ${p2} · ${pbg}` }
+        })
+      });
+    } catch(e) { /* brief igual llegó por WhatsApp */ }
+  }
+
+  try { localStorage.setItem('semilla_last_brief', JSON.stringify({ name, date: fecha })); } catch(e) {}
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── EDITOR ──
+function switchTab(tab) {
+  document.getElementById('tab-editor-btn').classList.toggle('active', tab === 'editor');
+  document.getElementById('tab-preview-btn').classList.toggle('active', tab === 'preview');
+  document.getElementById('tab-editor').classList.toggle('active', tab === 'editor');
+  document.getElementById('tab-preview').classList.toggle('active', tab === 'preview');
+}
+function populateEditor() {
+  const map = { 'e-name': 'q-name', 'e-tagline': 'q-tagline', 'e-type': 'q-type', 'e-city': 'q-city', 'e-desc': 'q-desc', 'e-services': 'q-services', 'e-horario': 'q-horario', 'e-contact': 'q-contact', 'e-cta-label': 'q-cta-label', 'e-testi-frase': 'q-testi-frase', 'e-testi-nombre': 'q-testi-nombre', 'e-testi-cargo': 'q-testi-cargo' };
+  for (const [eid, qid] of Object.entries(map)) {
+    const src = document.getElementById(qid); const dst = document.getElementById(eid);
+    if (src && dst) dst.value = src.value;
+  }
+  const colorMap = { 'e-color1': p1, 'e-color2': p2, 'e-colorbg': pbg };
+  for (const [id, val] of Object.entries(colorMap)) {
+    const pk = document.getElementById(id); const hx = document.getElementById(id + '-hex');
+    if (pk) pk.value = val; if (hx) hx.value = val;
+    if (pk && hx) { pk.addEventListener('input', () => hx.value = pk.value); hx.addEventListener('input', () => { if (/^#[0-9a-fA-F]{6}$/.test(hx.value)) pk.value = hx.value; }); }
+  }
+}
+function applyEdits() {
+  const name = document.getElementById('e-name').value.trim();
+  const tagline = document.getElementById('e-tagline').value.trim();
+  const type = document.getElementById('e-type').value.trim();
+  const city = document.getElementById('e-city').value.trim();
+  const desc = document.getElementById('e-desc').value.trim();
+  const svcs = document.getElementById('e-services').value.trim();
+  const horario = document.getElementById('e-horario').value.trim();
+  const contact = document.getElementById('e-contact').value.trim();
+  const ctaLabel = document.getElementById('e-cta-label').value.trim();
+  const testiFrase = document.getElementById('e-testi-frase').value.trim();
+  const testiNombre = document.getElementById('e-testi-nombre').value.trim();
+  const testiCargo = document.getElementById('e-testi-cargo').value.trim();
+  const c1e = document.getElementById('e-color1').value;
+  const c2e = document.getElementById('e-color2').value;
+  const bge = document.getElementById('e-colorbg').value;
+  p1 = c1e; p2 = c2e; pbg = bge;
+  const serviceList = svcs.split(',').map(s => s.trim()).filter(Boolean);
+  const isWA = /^\+?\d[\d\s]{7,}/.test(contact.replace(/\s/g, ''));
+  const cLink = isWA ? `https://wa.me/${contact.replace(/\D/g, '')}` : `mailto:${contact}`;
+  const imgs = { logo: logoB64, cover: coverB64, gal: [gal1B64, gal2B64, gal3B64].filter(Boolean) };
+  const precios = Array.from(document.querySelectorAll('.precio-row')).map(row => { const n = row.querySelector('.precio-nombre').value.trim(); const v = row.querySelector('.precio-valor').value.trim(); return n || v ? { nombre: n, valor: v } : null; }).filter(Boolean);
+  const precioRango = document.getElementById('q-precio-rango')?.value.trim() || '';
+  const testimonio = { frase: testiFrase, nombre: testiNombre, cargo: testiCargo };
+  const finalTagline = tagline || `La mejor opción en ${type.toLowerCase()} en ${city}`;
+  const ctaHref = buildCTALink() || cLink;
+  generatedHTML = buildPage(name, type, desc, serviceList, contact, cLink, city, finalTagline, c1e, c2e, bge, ctaHref, ctaLabel || 'Contáctanos', imgs, horario, precios, precioRango, testimonio);
+  document.getElementById('preview-frame').srcdoc = generatedHTML;
+  document.getElementById('preview-url-bar').textContent = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '.com';
+  switchTab('preview');
+  const btn = document.querySelector('.btn-update');
+  if (btn) { btn.classList.add('updated'); btn.textContent = '✓ Actualizado'; setTimeout(() => { btn.classList.remove('updated'); btn.textContent = '🔄 Actualizar vista previa'; }, 2000); }
+}
+
+// ── DOWNLOAD ──
+function downloadPage() {
+  if (!generatedHTML) return;
+  const n = document.getElementById('q-name').value.trim() || 'mi-negocio';
+  const filename = n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '.html';
+  try {
+    const blob = new Blob([generatedHTML], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
+  } catch (e) {
+    const a = document.createElement('a'); a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(generatedHTML); a.download = filename; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); setTimeout(() => document.body.removeChild(a), 300);
+  }
+}
+
+// ── SHARE ──
+function shareWhatsApp() {
+  const name = document.getElementById('q-name')?.value.trim() || 'mi negocio';
+  window.open(`https://wa.me/?text=${encodeURIComponent(`¡Mira la página web que creé para ${name} con Semilla Estudio! 🌱`)}`, '_blank');
+}
+function copyPageLink() {
+  const btn = document.querySelector('.btn-copy-link');
+  navigator.clipboard.writeText(window.location.href).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = window.location.href;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }).finally(() => {
+    if (btn) { btn.textContent = '✓ Copiado'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '🔗 Copiar'; btn.classList.remove('copied'); }, 2000); }
+  });
+}
+
+// ── NETLIFY ──
+function openNetlifyModal() { if (!generatedHTML) { alert('Primero genera tu página.'); return; } resetNetlifyModal(); document.getElementById('netlify-modal').classList.add('active'); }
+function closeNetlifyModal() { document.getElementById('netlify-modal').classList.remove('active'); }
+function resetNetlifyModal() { ['netlify-step-deploying', 'netlify-step-success', 'netlify-step-error'].forEach(id => document.getElementById(id).style.display = 'none'); document.getElementById('netlify-step-token').style.display = 'block'; }
+async function deployToNetlify() {
+  const token = document.getElementById('netlify-token-input').value.trim();
+  if (!token) { alert('Por favor pega tu token de Netlify.'); return; }
+  const rawName = document.getElementById('netlify-site-name').value.trim() || (document.getElementById('q-name')?.value.trim() || 'mi-negocio');
+  const siteName = rawName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').substring(0, 30) + '-' + Date.now().toString(36);
+  document.getElementById('netlify-step-token').style.display = 'none';
+  document.getElementById('netlify-step-deploying').style.display = 'block';
+  try {
+    const encoder = new TextEncoder();
+    const htmlBytes = encoder.encode(generatedHTML);
+    const siteRes = await fetch('https://api.netlify.com/api/v1/sites', { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: siteName }) });
+    if (!siteRes.ok) { const err = await siteRes.json(); throw new Error(err.message || `Error ${siteRes.status}`); }
+    const site = await siteRes.json();
+    const crypto = await window.crypto.subtle.digest('SHA-1', htmlBytes);
+    const sha1 = Array.from(new Uint8Array(crypto)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${site.id}/deploys`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ files: { '/index.html': sha1 } }) });
+    if (!deployRes.ok) { const err = await deployRes.json(); throw new Error(err.message || `Error ${deployRes.status}`); }
+    const deploy = await deployRes.json();
+    const uploadRes = await fetch(`https://api.netlify.com/api/v1/deploys/${deploy.id}/files/index.html`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/octet-stream' }, body: htmlBytes });
+    if (!uploadRes.ok) throw new Error(`Error subiendo archivo (${uploadRes.status})`);
+    let liveUrl = '';
+    for (let i = 0; i < 20; i++) {
+      await new Promise(r => setTimeout(r, 1500));
+      const check = await fetch(`https://api.netlify.com/api/v1/deploys/${deploy.id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      const d = await check.json();
+      if (d.state === 'ready' || d.state === 'uploaded') { liveUrl = d.ssl_url || d.url || `https://${siteName}.netlify.app`; break; }
+    }
+    if (!liveUrl) liveUrl = `https://${siteName}.netlify.app`;
+    document.getElementById('netlify-step-deploying').style.display = 'none';
+    document.getElementById('netlify-step-success').style.display = 'block';
+    const urlEl = document.getElementById('netlify-result-url'); urlEl.textContent = liveUrl; urlEl.href = liveUrl;
+  } catch (e) {
+    document.getElementById('netlify-step-deploying').style.display = 'none';
+    document.getElementById('netlify-step-error').style.display = 'block';
+    document.getElementById('netlify-error-msg').textContent = e.message || 'Verifica tu token e intenta de nuevo.';
+  }
+}
+function copyNetlifyUrl() {
+  const url = document.getElementById('netlify-result-url')?.textContent || '';
+  navigator.clipboard.writeText(url).catch(() => {});
+  const btn = event.target; btn.textContent = '✓ Copiada'; setTimeout(() => btn.textContent = '📋 Copiar URL', 2000);
+}
+
+// ── LOCALSTORAGE ──
+function saveProgress() {
+  try {
+    const data = { step: cur, colors: { p1, p2, pbg }, fields: {} };
+    ['q-name','q-type','q-desc','q-services','q-contact','q-city','q-tagline','q-cta-type','q-cta-wa-number','q-cta-wa-msg','q-cta-ig','q-cta-form','q-cta-url','q-cta-label','q-horario','q-precio-rango','q-testi-frase','q-testi-nombre','q-testi-cargo'].forEach(id => { const el = document.getElementById(id); if (el) data.fields[id] = el.value; });
+    data.precios = Array.from(document.querySelectorAll('.precio-row')).map(row => ({ n: row.querySelector('.precio-nombre')?.value || '', v: row.querySelector('.precio-valor')?.value || '' }));
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (!data || !data.step || data.step < 2) return;
+    document.getElementById('resume-banner').style.display = 'flex';
+  } catch (e) {}
+}
+function resumeProgress() {
+  try {
+    const data = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (!data) return;
+    Object.entries(data.fields || {}).forEach(([id, val]) => { const el = document.getElementById(id); if (el) el.value = val; });
+    if (data.colors) { p1 = data.colors.p1 || p1; p2 = data.colors.p2 || p2; pbg = data.colors.pbg || pbg; }
+    if (data.precios) { const rows = document.querySelectorAll('.precio-row'); data.precios.forEach((p, i) => { if (rows[i]) { const n = rows[i].querySelector('.precio-nombre'); if (n) n.value = p.n || ''; const v = rows[i].querySelector('.precio-valor'); if (v) v.value = p.v || ''; } }); }
+    const ctaType = data.fields['q-cta-type'];
+    if (ctaType) { const fieldsMap = { whatsapp: 'cta-whatsapp-fields', instagram: 'cta-instagram-fields', formulario: 'cta-formulario-fields', otro: 'cta-otro-fields' }; if (fieldsMap[ctaType]) document.getElementById(fieldsMap[ctaType]).style.display = 'block'; }
+    dismissResume();
+    cur = Math.min(data.step, TOTAL);
+    showStep(cur);
+  } catch (e) {}
+}
+function dismissResume() { document.getElementById('resume-banner').style.display = 'none'; }
+
+// ── RESTART ──
+function restartApp() {
+  cur = 1; generatedHTML = '';
+  logoB64 = ''; coverB64 = ''; gal1B64 = ''; gal2B64 = ''; gal3B64 = '';
+  p1 = '#4A5E3A'; p2 = '#D4A853'; pbg = '#F5F0E8';
+  ['q-name','q-type','q-desc','q-services','q-contact','q-city','q-tagline','q-cta-type','q-cta-wa-number','q-cta-wa-msg','q-cta-ig','q-cta-form','q-cta-url','q-cta-label','q-horario','q-precio-rango','q-testi-frase','q-testi-nombre','q-testi-cargo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.querySelectorAll('.option-card, .palette-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.palette-card').forEach((c, i) => { if (i === 0) c.classList.add('selected'); });
+  document.querySelectorAll('.cta-fields').forEach(f => f.style.display = 'none');
+  document.querySelectorAll('.precio-nombre, .precio-valor').forEach(el => el.value = '');
+  document.getElementById('result-screen').classList.remove('active');
+  if(document.getElementById('result-review')) document.getElementById('result-review').style.display='block';
+  if(document.getElementById('result-success')) document.getElementById('result-success').style.display='none';
+  document.getElementById('loading-screen').classList.remove('active');
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  showStep(1);
+}
+
+// ── ENTER KEY ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && cur < TOTAL) {
+    const active = document.querySelector('.step-screen.active');
+    if (active && !active.querySelector('textarea:focus')) nextStep();
+  }
+});
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => { checkSession(); try { loadProgress(); } catch (e) {} });
+</script>
+</body>
+</html>
