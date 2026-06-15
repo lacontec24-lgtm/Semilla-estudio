@@ -529,16 +529,38 @@ textarea.input-field{min-height:110px;line-height:1.55}
 <!-- RESULT -->
 <div id="result-screen">
 
-  <!-- PASO A: Revisión del brief -->
-  <div id="result-review" style="width:100%;max-width:680px">
-    <div style="text-align:center;margin-bottom:32px">
-      <div style="font-size:3rem;margin-bottom:12px">📋</div>
-      <div class="result-title">Revisa tu información</div>
-      <div class="result-sub">Confirma que todo esté correcto antes de enviarnos tu solicitud.</div>
+  <!-- PASO A: Revisión del brief + Vista previa -->
+  <div id="result-review" style="width:100%;max-width:920px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div class="result-title">¡Tu información está <span>lista!</span></div>
+      <div class="result-sub">Revisa la vista previa y confirma tu solicitud.</div>
     </div>
+
+    <!-- Tabs: Preview | Brief -->
+    <div class="tab-nav" style="margin-bottom:20px">
+      <button class="tab-btn active" id="result-tab-preview-btn" onclick="switchResultTab('preview')">👁 Vista previa</button>
+      <button class="tab-btn" id="result-tab-brief-btn" onclick="switchResultTab('brief')">📋 Tu información</button>
+    </div>
+
+    <!-- Preview Panel -->
+    <div id="result-tab-preview" style="display:block;margin-bottom:20px">
+      <div class="browser-chrome">
+        <div class="browser-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="url-bar" id="preview-url-bar">tunegocio.com</div>
+        </div>
+        <iframe id="preview-frame" sandbox="allow-same-origin" style="width:100%;height:500px;border:none;background:white;display:block"></iframe>
+      </div>
+    </div>
+
+    <!-- Brief Panel -->
+    <div id="result-tab-brief" style="display:none;margin-bottom:20px">
 
     <!-- Brief cards -->
     <div class="brief-grid" id="brief-display"></div>
+
+    </div><!-- end result-tab-brief -->
 
     <!-- Acuerdo -->
     <div style="background:var(--lino);border:1.5px solid var(--border);border-radius:14px;padding:20px 24px;margin-top:20px">
@@ -730,7 +752,7 @@ let logoB64 = '', coverB64 = '', gal1B64 = '', gal2B64 = '', gal3B64 = '';
 // LOGIN + OTP
 // ════════════════════════════════════════
 const ADMIN_EMAIL = 'la.contec24@gmail.com';
-const MASTER_KEY = 'SemillaMaster2024!'; // Solo para acceso local de prueba
+const MASTER_KEY = 'CAMBIAR_ANTES_DE_PUBLICAR'; // Solo para acceso local de prueba
 let currentUserId = null;
 let currentUserNegocio = '';
 let currentUserRole = '';
@@ -763,7 +785,7 @@ async function doLogin() {
                     (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
 
   if (isNetlify) {
-    // Producción: verificar en Supabase
+    // Verificar en Supabase via Netlify Function
     try {
       const res = await fetch('/.netlify/functions/auth-login', {
         method: 'POST',
@@ -1054,42 +1076,17 @@ El nombre del negocio ingresado hasta ahora es: "${document.getElementById('q-na
 Responde de forma concisa (máximo 3 oraciones). Si te preguntan algo técnico, simplifica. Si no sabes algo, sugiere contactar a Semilla Estudio por WhatsApp.`;
 
   try {
-    const host = window.location.hostname;
-    const isNetlify = host.endsWith('.netlify.app') || host.endsWith('.netlify.com') ||
-                      (host !== 'localhost' && !host.includes('192.168') && window.location.protocol === 'https:');
-
-    if (isNetlify) {
-      // Producción: usar Function de Netlify
-      const res = await fetch('/.netlify/functions/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: chatHistory, system: systemPrompt })
-      });
-      if (!res.ok) throw new Error('Error del servidor');
-      const data = await res.json();
-      removeTyping();
-      const reply = (data.content && data.content[0]) ? data.content[0].text : 'En este momento no puedo responder. Intenta de nuevo.';
-      addChatMessage('bot', reply);
-      chatHistory.push({ role: 'assistant', content: reply });
-    } else {
-      // Local: usar API de Anthropic directamente para pruebas
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 300,
-          system: systemPrompt,
-          messages: chatHistory.slice(-10)
-        })
-      });
-      if (!res.ok) throw new Error('Error API');
-      const data = await res.json();
-      removeTyping();
-      const reply = (data.content && data.content[0]) ? data.content[0].text : 'En este momento no puedo responder.';
-      addChatMessage('bot', reply);
-      chatHistory.push({ role: 'assistant', content: reply });
-    }
+    const res = await fetch('/.netlify/functions/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory.slice(-10), system: systemPrompt })
+    });
+    if (!res.ok) throw new Error('Error del servidor');
+    const data = await res.json();
+    removeTyping();
+    const reply = (data.content && data.content[0]) ? data.content[0].text : 'En este momento no puedo responder.';
+    addChatMessage('bot', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
     if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
   } catch(e) {
     removeTyping();
@@ -1656,9 +1653,23 @@ function showResult(name) {
   const rs = document.getElementById('result-screen');
   rs.classList.add('active');
   renderBrief();
+  // Show preview
+  if (generatedHTML) {
+    const frame = document.getElementById('preview-frame');
+    if (frame) frame.srcdoc = generatedHTML;
+    const urlBar = document.getElementById('preview-url-bar');
+    if (urlBar) urlBar.textContent = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '.com';
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
+function switchResultTab(tab) {
+  document.getElementById('result-tab-preview-btn').classList.toggle('active', tab === 'preview');
+  document.getElementById('result-tab-brief-btn').classList.toggle('active', tab === 'brief');
+  document.getElementById('result-tab-preview').style.display = tab === 'preview' ? 'block' : 'none';
+  document.getElementById('result-tab-brief').style.display = tab === 'brief' ? 'block' : 'none';
+}
 function renderBrief() {
   const name     = document.getElementById('q-name').value.trim();
   const type     = document.getElementById('q-type').value.trim();
