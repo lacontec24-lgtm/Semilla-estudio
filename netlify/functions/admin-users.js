@@ -13,8 +13,8 @@ exports.handler = async function(event) {
 
   if (event.httpMethod === 'GET') {
     const { data } = await supabase
-      .from('usuarios')
-      .select('id,email,negocio,activo,creado_en,ultimo_acceso,role')
+      .from('semilla_users')
+      .select('id,email,negocio,activo,creado_en,ultimo_acceso')
       .order('creado_en', { ascending: false });
     return { statusCode: 200, body: JSON.stringify(data || []) };
   }
@@ -23,8 +23,8 @@ exports.handler = async function(event) {
     const { email, password, negocio } = JSON.parse(event.body);
     const password_hash = await bcrypt.hash(password, 10);
     const { data, error } = await supabase
-      .from('usuarios')
-      .insert([{ email: email.toLowerCase(), password_hash, negocio, activo: true, role: 'client', creado_en: new Date().toISOString() }])
+      .from('semilla_users')
+      .insert([{ email: email.toLowerCase(), password_hash, negocio, activo: true, creado_en: new Date().toISOString() }])
       .select().single();
     if (error) return { statusCode: 400, body: JSON.stringify({ error: error.message }) };
     return { statusCode: 200, body: JSON.stringify(data) };
@@ -32,7 +32,7 @@ exports.handler = async function(event) {
 
   if (event.httpMethod === 'PATCH') {
     const { id, activo } = JSON.parse(event.body);
-    await supabase.from('usuarios').update({ activo }).eq('id', id);
+    await supabase.from('semilla_users').update({ activo }).eq('id', id);
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   }
 
