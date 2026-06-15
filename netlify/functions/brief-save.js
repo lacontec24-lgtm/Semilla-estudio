@@ -9,8 +9,8 @@ exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
   try {
     const { userId, brief } = JSON.parse(event.body);
-    const { error } = await supabase.from('briefs').insert([{
-      usuario_id: userId,
+    const { error } = await supabase.from('semilla_briefs').insert([{
+      user_id: userId,
       negocio: brief.name,
       tipo: brief.type,
       ciudad: brief.city,
